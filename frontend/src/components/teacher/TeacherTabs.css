@@ -1,0 +1,83 @@
+.teacher-tabs-container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.welcome-message {
+    font-size: 1.8rem;
+    color: #1f2937;
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+}
+
+.tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+    margin-bottom: 2rem;
+}
+
+.tab {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    /* Overlap the container's border */
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #6b7280;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.tab:hover {
+    color: #374151;
+    border-bottom-color: #d1d5db;
+}
+
+.tab-active {
+    padding: 0.75rem 1.5rem;
+    background: none;
+    border: none;
+    border-bottom: 2px solid #6366f1;
+    /* Primary indigo color */
+    margin-bottom: -2px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #6366f1;
+    transition: all 0.2s ease;
+    font-family: inherit;
+}
+
+.tab-content {
+    padding: 1.5rem;
+    background-color: #f8fafc;
+    border-radius: 8px;
+    border: 1px solid #f1f5f9;
+    min-height: 250px;
+}
+
+/* Add some nice fade-in animation for tab content */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.tab-content>div {
+    animation: fadeIn 0.3s ease-out forwards;
+}

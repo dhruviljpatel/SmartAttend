@@ -1,0 +1,119 @@
+.take-attendance-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1rem;
+    font-family: 'Inter', sans-serif;
+}
+
+.attendance-heading {
+    font-size: 1.5rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 400px;
+}
+
+.input-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.subject-select {
+    padding: 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 1rem;
+    color: #374151;
+    background-color: #ffffff;
+    outline: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.subject-select:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
+}
+
+.subject-select:disabled,
+.subject-select option:disabled {
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.action-section {
+    margin-top: 1rem;
+}
+
+.action-buttons-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+}
+
+.action-buttons-group > button {
+    width: 100%;
+}
+
+.btn-primary {
+    padding: 0.75rem 1.5rem;
+    background-color: #6366f1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary:hover {
+    background-color: #4f46e5;
+    box-shadow: 0 4px 6px -1px rgba(99, 102, 241, 0.2), 0 2px 4px -1px rgba(99, 102, 241, 0.1);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+.btn-red {
+    background-color: #ef4444;
+}
+
+.btn-red:hover {
+    background-color: #dc2626;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2), 0 2px 4px -1px rgba(239, 68, 68, 0.1);
+}
+
+.btn-purple {
+    background-color: #8b5cf6;
+}
+
+.btn-purple:hover {
+    background-color: #7c3aed;
+    box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.2), 0 2px 4px -1px rgba(139, 92, 246, 0.1);
+}
+
+.add-photos-btn {
+    width: 100%;
+    max-width: 200px;
+    background-color: #10b981;
+    /* Green color for positive action */
+}
+
+.add-photos-btn:hover {
+    background-color: #059669;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.2), 0 2px 4px -1px rgba(16, 185, 129, 0.1);
+}

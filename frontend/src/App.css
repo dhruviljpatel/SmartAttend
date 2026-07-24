@@ -1,0 +1,5 @@
+/* App-specific base layout (if needed) */
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
