@@ -8,13 +8,18 @@ export function TakeAttendance() {
 
     return (
         <div className="take-attendance-container">
-            <h2 className="attendance-heading">Take AI Attendance</h2>
+            <div className="ta-header-container">
+                <h2 className="ta-heading">Take AI Attendance</h2>
+                <button className="ta-btn-primary ta-add-photos-btn" type="button">
+                    Add Photos
+                </button>
+            </div>
 
-            <div className="form-group">
-                <label htmlFor="subject-select" className="input-label">Select Subject</label>
+            <div className="ta-form-group">
+                <label htmlFor="subject-select" className="ta-input-label">Select Subject</label>
                 <select
                     id="subject-select"
-                    className="subject-select"
+                    className="ta-subject-select"
                     value={selectedSubject}
                     onChange={(e) => setSelectedSubject(e.target.value)}
                 >
@@ -28,16 +33,10 @@ export function TakeAttendance() {
                 </select>
             </div>
 
-            <div className="action-section">
-                <button className="btn-primary add-photos-btn" type="button">
-                    Add Photos
-                </button>
-            </div>
-
-            <div className="action-buttons-group">
-                <button className="btn-primary btn-red" type="button">Clear Photos</button>
-                <button className="btn-primary" type="button">Run Face Analysis</button>
-                <button className="btn-primary btn-purple" type="button">Use Voice Attendance</button>
+            <div className="ta-action-buttons-group">
+                <button className="ta-btn-primary ta-btn-red" type="button">Clear Photos</button>
+                <button className="ta-btn-primary" type="button">Run Face Analysis</button>
+                <button className="ta-btn-primary ta-btn-purple" type="button">Use Voice Attendance</button>
             </div>
         </div>
     );

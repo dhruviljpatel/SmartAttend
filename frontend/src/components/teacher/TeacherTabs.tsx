@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import { TakeAttendance } from './TakeAttendance';
+import { ManageSubjects } from './ManageSubjects';
+import { AttendanceRecords } from './AttendanceRecords';
 
 import './TeacherTabs.css'
 
@@ -54,14 +56,10 @@ export function TeacherTabs({ name }: { name: string }) {
                     <TakeAttendance />
                 )}
                 {activeTab === 'manage_subjects' && (
-                    <div>
-                        <h3>Manage Subjects</h3>
-                    </div>
+                    <ManageSubjects />
                 )}
                 {activeTab === 'attendance_records' && (
-                    <div>
-                        <h3>Attendance Records</h3>
-                    </div>
+                    <AttendanceRecords />
                 )}
             </div>
         </div>
