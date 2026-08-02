@@ -4,14 +4,14 @@ import { TeacherTabs } from "../../components/teacher/TeacherTabs";
 
 export function TeacherDashboard() {
     const [searchParams] = useSearchParams();
-    const name = searchParams.get("name");
+    const name = searchParams.get("name") || "";
 
     return (
-        <div>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
             <Header />
-            <TeacherTabs
-                name={name}
-            />
+            <div className="flex-1 w-full mx-auto">
+                <TeacherTabs name={name} />
+            </div>
         </div>
     )
 }

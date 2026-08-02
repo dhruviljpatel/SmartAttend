@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './TeacherLogin.css';
 
 export function TeacherLogin() {
     const [formData, setFormData] = useState({
@@ -14,19 +13,19 @@ export function TeacherLogin() {
     }
 
     return (
-        <div className='login-page-wrapper'>
-            <div className='login-container'>
+        <div className='page-container'>
+            <div className='card-container relative'>
                 <button
-                    className='btn-home'
+                    className='absolute top-6 left-6 p-2 text-gray-500 hover:text-black hover:bg-gray-100 rounded-full transition-colors cursor-pointer border-none bg-transparent flex items-center justify-center'
                     onClick={() => {
                         navigate('/');
                     }}>
                     <i className="fa-solid fa-chevron-left"></i>
                 </button>
-                <h1>Teacher Login</h1>
-                <form className='login-form'>
+                <h1 className="card-title">Teacher Login</h1>
+                <form className='flex flex-col'>
                     <div className='form-group'>
-                        <p>Enter Username</p>
+                        <p className="form-label">Enter Username</p>
                         <input
                             className='form-input'
                             type='text'
@@ -42,7 +41,7 @@ export function TeacherLogin() {
                         />
                     </div>
                     <div className='form-group'>
-                        <p>Enter Password</p>
+                        <p className="form-label">Enter Password</p>
                         <input
                             className='form-input'
                             type='password'
@@ -57,22 +56,24 @@ export function TeacherLogin() {
                             required
                         />
                     </div>
-                    <button
-                        className='btn-primary'
-                        type='submit'
-                        onClick={Login}
-                    >
-                        Login <span className='key'>Ctrl + Enter</span>
-                    </button>
-                    <button
-                        className='btn-secondary'
-                        type='button'
-                        onClick={() => {
-                            navigate('/teacher-register');
-                        }}
-                    >
-                        Register Instead
-                    </button>
+                    <div className="flex flex-col gap-4 mt-2">
+                        <button
+                            className='btn-primary'
+                            type='submit'
+                            onClick={Login}
+                        >
+                            Login <span className='text-xs bg-gray-800 border border-gray-600 px-1.5 py-0.5 rounded text-gray-200 ml-2'>Ctrl + Enter</span>
+                        </button>
+                        <button
+                            className='btn-secondary'
+                            type='button'
+                            onClick={() => {
+                                navigate('/teacher-register');
+                            }}
+                        >
+                            Register Instead
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
