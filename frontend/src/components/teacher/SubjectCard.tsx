@@ -1,6 +1,7 @@
-import { Users, BookOpen } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Users, BookOpen, Share2 } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 interface SubjectCardProps {
     name: string;
@@ -12,7 +13,7 @@ interface SubjectCardProps {
 
 export function SubjectCard({ name, code, section, students, classes }: SubjectCardProps) {
     return (
-        <Card className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-gray-200 bg-white">
+        <Card className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-gray-200 bg-white flex flex-col h-full">
             <CardHeader className="pb-3">
                 <CardTitle className="text-xl leading-tight line-clamp-1">{name}</CardTitle>
                 <div className="flex items-center gap-2 mt-2">
@@ -25,7 +26,7 @@ export function SubjectCard({ name, code, section, students, classes }: SubjectC
                     </span>
                 </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex-1 pb-4">
                 <div className="flex items-center gap-4 text-sm pt-4 border-t border-gray-100 mt-2">
                     <div className="flex items-center gap-2 bg-blue-50/50 px-3 py-2 rounded-lg border border-blue-100 flex-1 justify-center transition-colors hover:bg-blue-50">
                         <Users className="w-4 h-4 text-blue-600" />
@@ -37,6 +38,12 @@ export function SubjectCard({ name, code, section, students, classes }: SubjectC
                     </div>
                 </div>
             </CardContent>
+            <CardFooter className="pt-0">
+                <Button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-sm transition-all" onClick={() => console.log('Share code logic here')}>
+                    <Share2 className="w-4 h-4 mr-2" />
+                    Share Code
+                </Button>
+            </CardFooter>
         </Card>
     );
 }

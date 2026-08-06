@@ -3,14 +3,23 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { ChevronLeft } from 'lucide-react';
 
 export function TeacherRegister() {
     const navigate = useNavigate();
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <Card className="w-full max-w-md shadow-xl border-0">
-                <CardHeader className="text-center pb-8 pt-8">
+            <Card className="w-full max-w-md relative shadow-xl border-0">
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute left-4 top-4 rounded-full text-gray-500 hover:text-gray-900"
+                    onClick={() => navigate('/')}
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <CardHeader className="text-center pb-8 pt-12">
                     <CardTitle className="text-3xl font-bold tracking-tight">Teacher Registration</CardTitle>
                     <CardDescription>Create a new teacher account</CardDescription>
                 </CardHeader>

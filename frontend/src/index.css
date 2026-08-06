@@ -17,7 +17,7 @@
     @apply border-border outline-ring/50;
     }
   html {
-    @apply font-mono;
+    @apply font-mono overflow-y-scroll;
     }
 }
 
