@@ -1,6 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 import Webcam from 'react-webcam';
 import { Camera, RefreshCw, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface CameraCaptureProps {
     onContinue: (imageSrc: string) => void;
@@ -38,14 +39,14 @@ export const CameraCapture = ({ onContinue, isAuthenticating }: CameraCapturePro
 
     return (
         <>
-            <div className="relative w-full aspect-[3/4] sm:aspect-square bg-gray-100 rounded-2xl overflow-hidden mb-8 border border-gray-200">
+            <div className="relative w-full aspect-[3/4] sm:aspect-square bg-gray-100 rounded-xl overflow-hidden mb-8 border border-gray-200">
                 {cameraError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-red-500 p-6 text-center">
                         <span className="mb-2 text-2xl">⚠️</span>
                         <p className="text-sm">{cameraError}</p>
-                        <button onClick={retake} className="mt-4 px-6 py-2 bg-black text-white rounded-full hover:bg-gray-800 transition-colors text-sm font-medium cursor-pointer">
+                        <Button onClick={retake} variant="default" className="mt-4">
                             Try Again
-                        </button>
+                        </Button>
                     </div>
                 ) : !imageSrc ? (
                     <>
@@ -75,36 +76,37 @@ export const CameraCapture = ({ onContinue, isAuthenticating }: CameraCapturePro
 
             <div className="flex gap-4 w-full">
                 {!imageSrc ? (
-                    <button
+                    <Button
                         onClick={capture}
-                        className="w-full py-3 bg-black text-white hover:bg-gray-800 text-base font-medium rounded-full transition-colors flex items-center justify-center gap-2 cursor-pointer border-none"
+                        className="w-full h-12 text-base rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
                     >
-                        <Camera size={20} />
+                        <Camera size={20} className="mr-2" />
                         Capture
-                    </button>
+                    </Button>
                 ) : (
                     <>
-                        <button
+                        <Button
                             onClick={retake}
-                            className="flex-1 py-3 bg-transparent text-black border border-gray-300 hover:border-black rounded-full font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer"
+                            variant="outline"
+                            className="flex-1 h-12 rounded-full border-2 hover:bg-gray-50"
                         >
-                            <RefreshCw size={20} />
+                            <RefreshCw size={20} className="mr-2" />
                             Retake
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             onClick={handleContinue}
                             disabled={isAuthenticating}
-                            className="flex-[2] py-3 bg-black text-white hover:bg-gray-800 disabled:opacity-70 rounded-full font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer border-none"
+                            className="flex-[2] h-12 rounded-full shadow-md hover:shadow-lg transition-all hover:-translate-y-0.5"
                         >
                             {isAuthenticating ? (
                                 <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                             ) : (
                                 <>
                                     Continue
-                                    <ArrowRight size={20} />
+                                    <ArrowRight size={20} className="ml-2" />
                                 </>
                             )}
-                        </button>
+                        </Button>
                     </>
                 )}
             </div>

@@ -1,4 +1,6 @@
 import { Users, BookOpen } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface SubjectCardProps {
     name: string;
@@ -10,29 +12,31 @@ interface SubjectCardProps {
 
 export function SubjectCard({ name, code, section, students, classes }: SubjectCardProps) {
     return (
-        <div className="bg-white p-6 rounded-xl shadow-sm border border-black hover:shadow-md hover:-translate-y-1 transition-all duration-300">
-            {/* Custom font weight via arbitrary values as requested */}
-            <h4 className="text-[1.25rem] font-[600] text-gray-900 mb-3">{name}</h4>
-            
-            <div className="flex items-center text-gray-500 text-[14px] mb-5 mt-1">
-                <span className="mr-2">Code:</span>
-                <span className="bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-md font-mono text-[16px] font-[600] tracking-wide border border-indigo-200 shadow-sm">
-                    {code}
-                </span>
-                <span className="mx-3 text-gray-200">|</span> 
-                <span>Section: <span className="font-[600] text-gray-800">{section}</span></span>
-            </div>
-
-            <div className="flex items-center gap-4 text-sm pt-4 border-t border-gray-100">
-                <div className="flex items-center gap-2 bg-blue-50/80 px-3 py-1.5 rounded-lg border border-blue-100/50">
-                    <Users className="w-4 h-4 text-blue-600" />
-                    <span className="font-[500] text-gray-800">{students} <span className="text-gray-500 font-normal">Students</span></span>
+        <Card className="hover:shadow-lg hover:-translate-y-1 transition-all duration-300 border-gray-200 bg-white">
+            <CardHeader className="pb-3">
+                <CardTitle className="text-xl leading-tight line-clamp-1">{name}</CardTitle>
+                <div className="flex items-center gap-2 mt-2">
+                    <Badge variant="secondary" className="font-mono text-sm bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border border-indigo-200">
+                        {code}
+                    </Badge>
+                    <span className="text-gray-300">|</span>
+                    <span className="text-sm text-gray-500">
+                        Section: <span className="font-semibold text-gray-700">{section}</span>
+                    </span>
                 </div>
-                <div className="flex items-center gap-2 bg-purple-50/80 px-3 py-1.5 rounded-lg border border-purple-100/50">
-                    <BookOpen className="w-4 h-4 text-purple-600" />
-                    <span className="font-[500] text-gray-800">{classes} <span className="text-gray-500 font-normal">Classes</span></span>
+            </CardHeader>
+            <CardContent>
+                <div className="flex items-center gap-4 text-sm pt-4 border-t border-gray-100 mt-2">
+                    <div className="flex items-center gap-2 bg-blue-50/50 px-3 py-2 rounded-lg border border-blue-100 flex-1 justify-center transition-colors hover:bg-blue-50">
+                        <Users className="w-4 h-4 text-blue-600" />
+                        <span className="font-medium text-gray-800">{students} <span className="text-gray-500 font-normal">Students</span></span>
+                    </div>
+                    <div className="flex items-center gap-2 bg-purple-50/50 px-3 py-2 rounded-lg border border-purple-100 flex-1 justify-center transition-colors hover:bg-purple-50">
+                        <BookOpen className="w-4 h-4 text-purple-600" />
+                        <span className="font-medium text-gray-800">{classes} <span className="text-gray-500 font-normal">Classes</span></span>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </CardContent>
+        </Card>
     );
 }

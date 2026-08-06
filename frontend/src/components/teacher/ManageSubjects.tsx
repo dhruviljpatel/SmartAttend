@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { SubjectCard } from "./SubjectCard";
+import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 
 const DUMMY_SUBJECTS = [
     { id: 1, name: "Advanced Web Development", code: "CS-401", section: "A", students: 45, classes: 12 },
@@ -16,12 +18,13 @@ export function ManageSubjects() {
     const [subjects] = useState(DUMMY_SUBJECTS);
 
     return (
-        <div className="flex flex-col gap-6">
-            <div className="flex justify-between items-center">
-                <h2 className="text-2xl font-semibold m-0 text-gray-900">Manage Subjects</h2>
-                <button className="px-4 py-2 bg-emerald-500 text-white text-sm font-medium rounded-lg hover:bg-emerald-600 transition-colors shadow-sm cursor-pointer border-none" type="button">
+        <div className="flex flex-col gap-6 bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
+            <div className="flex justify-between items-center pb-4 border-b border-gray-100">
+                <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Manage Subjects</h2>
+                <Button className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-md">
+                    <Plus className="w-4 h-4 mr-2" />
                     Create New Subject
-                </button>
+                </Button>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

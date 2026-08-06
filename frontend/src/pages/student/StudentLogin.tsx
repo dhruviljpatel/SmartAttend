@@ -1,7 +1,9 @@
 import { useState } from 'react';
-import { ScanFace } from 'lucide-react';
+import { ScanFace, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { CameraCapture } from '../../components/student/CameraCapture';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 export const StudentLogin = () => {
     const [isAuthenticating, setIsAuthenticating] = useState(false);
@@ -19,27 +21,35 @@ export const StudentLogin = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white text-black flex flex-col items-center justify-center p-4">
-            <div className="w-full max-w-md flex flex-col items-center">
-                <div className="text-center mb-8">
-                    <div className="inline-flex items-center justify-center mb-4">
-                        <ScanFace size={40} className="text-black" />
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
+            <Card className="w-full max-w-md relative shadow-xl border-0 overflow-hidden">
+                <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="absolute left-4 top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
+                    onClick={() => navigate('/')}
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+                
+                <CardHeader className="text-center pb-6 pt-12 relative">
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-blue-50 to-transparent -z-10" />
+                    <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600 shadow-inner">
+                        <ScanFace size={32} />
                     </div>
-                    <h2 className="text-3xl font-bold mb-2">Student Portal</h2>
-                    <p className="text-gray-600 text-sm">Center your face in the frame to continue</p>
-                </div>
-
-                <CameraCapture
-                    onContinue={handleLogin}
-                    isAuthenticating={isAuthenticating}
-                />
-
-                <div className="text-center mt-12">
-                    <button onClick={() => navigate('/')} className="text-gray-500 hover:text-black transition-colors text-sm font-medium cursor-pointer bg-transparent border-none">
-                        ← Back to Home
-                    </button>
-                </div>
-            </div>
+                    <CardTitle className="text-3xl font-bold tracking-tight">Student Portal</CardTitle>
+                    <CardDescription className="text-md mt-2">Center your face in the frame to continue</CardDescription>
+                </CardHeader>
+                
+                <CardContent className="px-6 pb-8">
+                    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-2 overflow-hidden">
+                        <CameraCapture
+                            onContinue={handleLogin}
+                            isAuthenticating={isAuthenticating}
+                        />
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     );
 };

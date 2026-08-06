@@ -21,43 +21,7 @@
     }
 }
 
-@layer components {
 
-    /* Form Elements */
-    .form-group {
-        @apply mb-6;
-    }
-
-    .form-label {
-        @apply block text-sm font-medium text-gray-700 mb-2;
-    }
-
-    .form-input {
-        @apply w-full px-4 py-3 text-base border border-gray-300 rounded-lg bg-white text-gray-900 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent placeholder-gray-400;
-    }
-
-    /* Buttons */
-    .btn-primary {
-        @apply px-4 py-3 text-base font-medium bg-gray-700 text-white rounded-lg cursor-pointer flex justify-center items-center gap-2 transition-colors duration-200 hover:bg-gray-900 disabled:opacity-50 disabled:cursor-not-allowed;
-    }
-
-    .btn-secondary {
-        @apply px-4 py-3 text-base font-medium bg-transparent text-black border border-gray-300 rounded-lg cursor-pointer flex justify-center items-center gap-2 transition-colors duration-200 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed;
-    }
-
-    /* Layout Containers */
-    .page-container {
-        @apply min-h-screen bg-gray-50 flex justify-center items-center p-8;
-    }
-
-    .card-container {
-        @apply bg-white border border-gray-200 rounded-xl p-10 w-full max-w-md shadow-sm;
-    }
-
-    .card-title {
-        @apply text-2xl font-semibold mb-8 text-black text-center;
-    }
-}
 
 @theme inline {
 
