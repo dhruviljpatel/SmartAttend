@@ -13,6 +13,9 @@ export function HoverLottieIcon({ animationData, className = "" }: HoverLottieIc
     animationData,
     loop: false,
     autoplay: false,
+    rendererSettings: {
+      preserveAspectRatio: 'xMidYMid slice'
+    }
   };
 
   const { View, setDirection, play, stop } = useLottie(options);
@@ -40,7 +43,7 @@ export function HoverLottieIcon({ animationData, className = "" }: HoverLottieIc
   }, [play, setDirection, stop]);
 
   return (
-    <div ref={containerRef} className={`inline-flex items-center justify-center ${className}`}>
+    <div ref={containerRef} className={`inline-flex items-center justify-center [&>div]:w-full [&>div]:h-full [&_svg]:w-full [&_svg]:h-full ${className}`}>
       {View}
     </div>
   );

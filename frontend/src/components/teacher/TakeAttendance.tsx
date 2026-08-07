@@ -6,6 +6,7 @@ import { Camera, Mic, Plus } from 'lucide-react';
 import { HoverLottieIcon } from '@/components/ui/HoverLottieIcon';
 import deleteIconData from '../../assets/animated-icons/icons8-delete.json';
 
+
 export function TakeAttendance() {
     const [subjects] = useState<string[]>(['Computer Networks', 'Machine Learning', 'Data Structures']); // Added some dummies so the select works visually
     const [selectedSubject, setSelectedSubject] = useState('');

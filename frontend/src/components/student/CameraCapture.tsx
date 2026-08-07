@@ -37,7 +37,7 @@ export const CameraCapture = ({ onContinue, isAuthenticating }: CameraCapturePro
 
     return (
         <>
-            <div className="relative w-full aspect-[3/4] md:aspect-video bg-gray-100 rounded-xl overflow-hidden mb-8 border border-gray-200 transition-all duration-300">
+            <div className="relative w-full aspect-[3/4] md:aspect-video bg-gray-100 rounded-xl overflow-hidden mb-4 border border-gray-200 transition-all duration-300">
                 {cameraError ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-red-500 p-6 text-center">
                         <span className="mb-2 text-2xl">⚠️</span>
