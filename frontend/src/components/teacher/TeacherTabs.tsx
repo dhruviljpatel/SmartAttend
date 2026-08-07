@@ -10,16 +10,16 @@ export function TeacherTabs({ name }: { name: string }) {
             <h2 className='text-3xl font-bold mb-8 text-gray-900 tracking-tight'>Welcome, {name}</h2>
 
             <Tabs defaultValue="take_attendance" className="w-full">
-                <TabsList variant="line" className="w-full justify-start border-b border-border bg-transparent h-12 p-0 rounded-none mb-8">
-                    <TabsTrigger value="take_attendance" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none">
+                <TabsList variant="line" className="w-full justify-start border-b border-border bg-transparent h-12 p-0 rounded-none mb-8 overflow-x-auto overflow-y-hidden flex-nowrap hide-scrollbar">
+                    <TabsTrigger value="take_attendance" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none whitespace-nowrap">
                         <ClipboardList className="w-4 h-4 mr-2" />
                         <span>Attendance</span>
                     </TabsTrigger>
-                    <TabsTrigger value="manage_subjects" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none">
+                    <TabsTrigger value="manage_subjects" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none whitespace-nowrap">
                         <BookOpen className="w-4 h-4 mr-2" />
                         <span>Subjects</span>
                     </TabsTrigger>
-                    <TabsTrigger value="attendance_records" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none">
+                    <TabsTrigger value="attendance_records" className="h-full px-4 sm:px-6 text-sm sm:text-base data-active:shadow-none whitespace-nowrap">
                         <Users className="w-4 h-4 mr-2" />
                         <span>Records</span>
                     </TabsTrigger>

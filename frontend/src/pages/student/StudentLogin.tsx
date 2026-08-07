@@ -22,7 +22,7 @@ export const StudentLogin = () => {
 
     return (
         <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
-            <Card className="w-full max-w-md relative shadow-xl border-0 overflow-hidden">
+            <Card className="w-full max-w-md md:max-w-2xl lg:max-w-4xl relative shadow-xl border-0 overflow-hidden transition-all duration-300">
                 <Button 
                     variant="ghost" 
                     size="icon" 

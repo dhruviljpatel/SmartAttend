@@ -16,8 +16,8 @@ export function AttendanceRecords() {
                 <h2 className="text-2xl font-semibold text-gray-900 tracking-tight">Attendance Records</h2>
             </div>
 
-            <div className="mt-2 rounded-md border">
-                <Table>
+            <div className="mt-2 rounded-md border overflow-x-auto">
+                <Table className="min-w-[600px]">
                     <TableHeader className="bg-gray-50/50">
                         <TableRow>
                             <TableHead className="font-semibold text-gray-700">Student Name</TableHead>
