@@ -26,10 +26,10 @@ export function ManageSubjects() {
                     Create New Subject
                 </Button>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {subjects.map((subject) => (
-                    <SubjectCard 
+                    <SubjectCard
                         key={subject.id}
                         name={subject.name}
                         code={subject.code}

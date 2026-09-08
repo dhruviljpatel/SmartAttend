@@ -40,8 +40,8 @@ export function AttendanceRecords() {
                                     <TableCell>{record.date}</TableCell>
                                     <TableCell>{record.subject}</TableCell>
                                     <TableCell className="text-right">
-                                        <Badge variant={record.status === "Present" ? "default" : "destructive"} 
-                                               className={record.status === "Present" ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
+                                        <Badge variant={record.status === "Present" ? "default" : "destructive"}
+                                            className={record.status === "Present" ? "bg-emerald-500 hover:bg-emerald-600" : ""}>
                                             {record.status}
                                         </Badge>
                                     </TableCell>

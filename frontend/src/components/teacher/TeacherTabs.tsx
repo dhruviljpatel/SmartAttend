@@ -28,11 +28,11 @@ export function TeacherTabs({ name }: { name: string }) {
                 <TabsContent value="take_attendance" className="mt-2 outline-none animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
                     <TakeAttendance />
                 </TabsContent>
-                
+
                 <TabsContent value="manage_subjects" className="mt-2 outline-none animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
                     <ManageSubjects />
                 </TabsContent>
-                
+
                 <TabsContent value="attendance_records" className="mt-2 outline-none animate-in fade-in slide-in-from-bottom-2 duration-500 ease-out">
                     <AttendanceRecords />
                 </TabsContent>
