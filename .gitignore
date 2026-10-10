@@ -27,5 +27,13 @@ build/
 .DS_Store
 Thumbs.db
 
+backend/.env
+forme.txt
+node_modules
+
+.agents
+.claude
+.cursor
+.devin
 skill.md
 forme.txt
