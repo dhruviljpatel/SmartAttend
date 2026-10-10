@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Teacher {
+  id       Int       @id @default(autoincrement()) @map("teacher_id")
+  username String    @unique
+  password String
+  name     String
+  
+  subjects Subject[]
+
+  @@map("teachers")
+}
+
+model Student {
+  id              Int       @id @default(autoincrement()) @map("student_id")
+  name            String
+  faceEmbedding   Json?     @map("face_embedding")
+  voiceEmbedding  Json?     @map("voice_embedding")
+  
+  attendanceLogs  AttendanceLog[]
+  subjects        SubjectStudent[]
+
+  @@map("students")
+}
+
+model Subject {
+  id          Int      @id @default(autoincrement()) @map("subject_id")
+  subjectCode String   @map("subject_code")
+  name        String?  @default("UNKNOWN")
+  section     String?  @default("N/A")
+  teacherId   Int?     @map("teacher_id")
+
+  teacher     Teacher? @relation(fields: [teacherId], references: [id], onDelete: SetNull)
+  
+  attendanceLogs AttendanceLog[]
+  students       SubjectStudent[]
+
+  @@map("subjects")
+}
+
+model SubjectStudent {
+  subjectId Int @map("subject_id")
+  studentId Int @map("student_id")
+
+  subject Subject @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@id([subjectId, studentId])
+  @@map("subject_students")
+}
+
+model AttendanceLog {
+  id        Int       @id @default(autoincrement())
+  timestamp DateTime? @default(now()) @db.Timestamptz()
+  subjectId Int?      @map("subject_id")
+  studentId Int?      @map("student_id")
+  isPresent Boolean?  @default(true) @map("is_present")
+
+  subject Subject? @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  student Student? @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@map("attendance_logs")
+}
