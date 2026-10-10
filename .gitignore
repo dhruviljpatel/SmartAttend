@@ -1,0 +1,31 @@
+# Python Environment
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environment Variables
+.env
+.env.*
+
+# Node.js
+node_modules/
+dist/
+dist-ssr/
+build/
+
+# IDE / Editors
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+skill.md
+forme.txt
