@@ -16,14 +16,20 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
-// Routes
+// Primary /api routes
 app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/subjects', subjectRoutes);
 app.use('/api/attendance', attendanceRoutes);
 
-// Basic health check route
-app.get('/api/health', (req, res) => {
+// Fallback routes in case client omitted /api in base URL
+app.use('/auth', authRoutes);
+app.use('/students', studentRoutes);
+app.use('/subjects', subjectRoutes);
+app.use('/attendance', attendanceRoutes);
+
+// Health check routes
+app.get(['/api/health', '/health'], (req, res) => {
   res.json({ status: 'ok', message: 'SmartAttend API is running' });
 });
 
