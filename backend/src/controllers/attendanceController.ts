@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { prisma } from '../utils/db';
 
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const getMlServiceUrl = (): string =>
+  (process.env.ML_SERVICE_URL || 'http://localhost:8000').trim().replace(/\/+$/, '');
 
 interface PredictResponse {
   success: boolean;
@@ -52,7 +53,8 @@ export const takeAttendance = async (req: Request, res: Response): Promise<void>
 
     for (const imageBase64 of images) {
       try {
-        const mlResponse = await fetch(`${ML_SERVICE_URL}/predict-attendance/base64`, {
+        const mlUrl = getMlServiceUrl();
+        const mlResponse = await fetch(`${mlUrl}/predict-attendance/base64`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image_base64: imageBase64 }),

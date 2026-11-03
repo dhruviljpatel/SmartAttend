@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import { prisma } from '../utils/db';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key-please-change';
-const ML_SERVICE_URL = process.env.ML_SERVICE_URL || 'http://localhost:8000';
+const getMlServiceUrl = (): string =>
+  (process.env.ML_SERVICE_URL || 'http://localhost:8000').trim().replace(/\/+$/, '');
 
 /**
  * Helper to extract studentId from the Authorization Bearer JWT token if available
@@ -348,8 +349,11 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    const mlUrl = getMlServiceUrl();
+    console.log(`[FaceLogin] Calling ML service at: ${mlUrl}/verify-face/base64`);
+
     // Call ML FastAPI service endpoint
-    const mlResponse = await fetch(`${ML_SERVICE_URL}/verify-face/base64`, {
+    const mlResponse = await fetch(`${mlUrl}/verify-face/base64`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ image_base64: image }),
@@ -357,8 +361,12 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
 
     if (!mlResponse.ok) {
       const errorData = await mlResponse.text();
-      console.error('[ML Service error]', errorData);
-      res.status(502).json({ error: 'Failed to communicate with face recognition service.' });
+      console.error(`[ML Service Error] Status ${mlResponse.status} from ${mlUrl}:`, errorData);
+      res.status(502).json({
+        error: `ML facial recognition service returned status ${mlResponse.status}.`,
+        details: errorData || mlResponse.statusText,
+        targetUrl: `${mlUrl}/verify-face/base64`,
+      });
       return;
     }
 
@@ -449,9 +457,18 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
     });
   } catch (error: any) {
     console.error('Error during face login:', error);
-    if (error?.code === 'ECONNREFUSED' || error?.cause?.code === 'ECONNREFUSED' || error?.message?.includes('fetch failed')) {
-      res.status(503).json({
-        error: `Facial recognition ML service is unreachable at ${ML_SERVICE_URL}. Please verify that the Python ML service is running (e.g. uvicorn face:app --port 8000).`,
+    const mlUrl = getMlServiceUrl();
+    if (
+      error?.code === 'ECONNREFUSED' ||
+      error?.cause?.code === 'ECONNREFUSED' ||
+      error?.message?.includes('fetch failed')
+    ) {
+      res.status(502).json({
+        error: `Cannot connect to ML facial recognition service at "${mlUrl}".`,
+        hint: mlUrl.includes('localhost')
+          ? 'ML_SERVICE_URL is currently defaulting to localhost. In your Render Dashboard > Backend Web Service > Environment, set ML_SERVICE_URL to your deployed ML service URL (e.g. https://your-ml-service.onrender.com).'
+          : `Render could not reach ${mlUrl}. The ML service may be sleeping (cold start), deploying, or experiencing an issue. Try opening ${mlUrl}/health in a browser tab to wake it up.`,
+        targetUrl: `${mlUrl}/verify-face/base64`,
       });
       return;
     }
@@ -476,7 +493,8 @@ export const registerStudent = async (req: Request, res: Response): Promise<void
 
     // If faceEmbedding wasn't directly provided, extract it using image
     if (!finalEmbedding && image) {
-      const mlResponse = await fetch(`${ML_SERVICE_URL}/extract-embeddings/base64`, {
+      const mlUrl = getMlServiceUrl();
+      const mlResponse = await fetch(`${mlUrl}/extract-embeddings/base64`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image_base64: image }),
