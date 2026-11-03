@@ -187,35 +187,35 @@ export const StudentLogin = () => {
     };
 
     return (
-        <div className="min-h-[100dvh] bg-slate-50 flex items-center justify-center p-2 sm:p-6 py-4">
-            <Card className="w-full max-w-md md:max-w-xl lg:max-w-2xl relative shadow-2xl border-0 overflow-hidden rounded-3xl bg-white transition-all duration-300">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
-                    onClick={() => navigate('/')}
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                </Button>
+            <div className="min-h-[100dvh] bg-slate-50 flex items-center justify-center p-2 sm:p-6 py-4">
+                <Card className="w-full max-w-md md:max-w-xl lg:max-w-2xl relative shadow-2xl border-0 overflow-hidden rounded-3xl bg-white transition-all duration-300">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
+                        onClick={() => navigate('/')}
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </Button>
 
-                <CardHeader className="text-center pb-2 pt-5 sm:pt-6 relative px-4">
-                    <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-blue-50/80 to-transparent -z-10" />
-                    <div className="mx-auto mb-2 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
-                        <Icons8FaceScan className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                    </div>
-                    <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
-                        SmartAttend Student Portal
-                    </CardTitle>
-                    <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
-                        {step === 'capture' && 'Position your face in the center of the frame to log in'}
-                        {step === 'analyzing' && 'Matching your face with enrolled students...'}
-                        {step === 'recognized' && 'Facial verification successful!'}
-                        {step === 'register' && 'New student detected! Complete your quick profile'}
-                        {step === 'error' && 'Authentication assistance needed'}
-                    </CardDescription>
+                        <CardHeader className="text-center pb-2 pt-5 sm:pt-6 relative px-4">
+                            <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-blue-50/80 to-transparent -z-10" />
+                                <div className="mx-auto mb-2 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
+                                    <Icons8FaceScan className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                                </div>
+                                    <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
+                                        SmartAttend Student Portal
+                                    </CardTitle>
+                                        <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
+                                            {step === 'capture' && 'Position your face in the center of the frame to log in'}
+                                            {step === 'analyzing' && 'Matching your face with enrolled students...'}
+                                            {step === 'recognized' && 'Facial verification successful!'}
+                                            {step === 'register' && 'New student detected! Complete your quick profile'}
+                                            {step === 'error' && 'Authentication assistance needed'}
+                                        </CardDescription>
 
-                    {/* ENROLLMENT BADGE IF SCANNED/ARRIVED VIA LINK */}
-                    {enrollCode && (
+                                        {/* ENROLLMENT BADGE IF SCANNED/ARRIVED VIA LINK */}
+                                        {enrollCode && (
                         <div className="mt-2.5 mx-auto inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-xs">
                             <QrCode className="w-3.5 h-3.5 text-indigo-600" />
                             <span>Auto-enrolling in:</span>
@@ -404,5 +404,5 @@ export const StudentLogin = () => {
                 </CardContent>
             </Card>
         </div>
-    );
+                                        );
 };

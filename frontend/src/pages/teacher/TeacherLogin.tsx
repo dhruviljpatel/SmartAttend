@@ -68,80 +68,80 @@ export function TeacherLogin() {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-3 sm:p-6 md:p-8">
-            <Card className="w-full max-w-md md:max-w-lg relative shadow-xl border-0 transition-all duration-300">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900"
-                    onClick={() => navigate('/')}
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <CardHeader className="text-center pb-6 sm:pb-8 pt-8 sm:pt-10 px-4">
-                    <div className="mx-auto mb-3 flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-black text-white rounded-2xl shadow-lg">
-                        <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7" />
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center p-3 sm:p-6 md:p-8">
+                <Card className="w-full max-w-md md:max-w-lg relative shadow-xl border-0 transition-all duration-300">
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900"
+                        onClick={() => navigate('/')}
+                    >
+                        <ChevronLeft className="h-5 w-5" />
+                    </Button>
+                            <CardHeader className="text-center pb-6 sm:pb-8 pt-8 sm:pt-10 px-4">
+                                <div className="mx-auto mb-3 flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-black text-white rounded-2xl shadow-lg">
+                                    <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7" />
+                                </div>
+                                <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">Teacher Login</CardTitle>
+                                <CardDescription className="text-xs sm:text-sm">Enter your credentials to access the portal</CardDescription>
+                            </CardHeader>
+                            <form onSubmit={handleLogin}>
+                                <CardContent className="space-y-6">
+                                    {registrationState?.registered && (
+                                        <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg">
+                                            Account created successfully! Please enter your password to log in.
+                                        </div>
+                                    )}
+                                    {error && (
+                                        <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
+                                            {error}
+                                        </div>
+                                    )}
+                                    <div className="space-y-2">
+                                        <Label htmlFor="username">Username</Label>
+                                        <Input
+                                            id="username"
+                                            type="text"
+                                            placeholder="@someone"
+                                            value={formData.username}
+                                            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                            required
+                                            className="h-12"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="password">Password</Label>
+                                        <Input
+                                            id="password"
+                                            type="password"
+                                            placeholder="••••••••"
+                                            value={formData.password}
+                                            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                            required
+                                            className="h-12"
+                                        />
+                                    </div>
+                                </CardContent>
+                                <CardFooter className="flex flex-col gap-4">
+                                    <Button type="submit" disabled={isLoading} className="w-full h-12 text-md font-medium">
+                                        {isLoading ? 'Signing in...' : 'Login'}
+                                        {!isLoading && (
+                                            <kbd className="ml-2 hidden sm:inline-flex items-center gap-1 rounded border border-white/20 bg-white/10 px-1.5 font-mono text-[10px] font-medium text-white">
+                                                <span className="text-xs">⌘</span>Enter
+                                            </kbd>
+                                        )}
+                                    </Button>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        className="w-full h-12 text-md font-medium"
+                                        onClick={() => navigate('/teacher-register')}
+                                    >
+                                        Create an account
+                                    </Button>
+                                </CardFooter>
+                            </form>
+                        </Card>
                     </div>
-                    <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">Teacher Login</CardTitle>
-                    <CardDescription className="text-xs sm:text-sm">Enter your credentials to access the portal</CardDescription>
-                </CardHeader>
-                <form onSubmit={handleLogin}>
-                    <CardContent className="space-y-6">
-                        {registrationState?.registered && (
-                            <div className="p-3 text-sm text-green-700 bg-green-50 border border-green-200 rounded-lg">
-                                Account created successfully! Please enter your password to log in.
-                            </div>
-                        )}
-                        {error && (
-                            <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
-                                {error}
-                            </div>
-                        )}
-                        <div className="space-y-2">
-                            <Label htmlFor="username">Username</Label>
-                            <Input
-                                id="username"
-                                type="text"
-                                placeholder="@someone"
-                                value={formData.username}
-                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
-                                required
-                                className="h-12"
-                            />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="password">Password</Label>
-                            <Input
-                                id="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                required
-                                className="h-12"
-                            />
-                        </div>
-                    </CardContent>
-                    <CardFooter className="flex flex-col gap-4">
-                        <Button type="submit" disabled={isLoading} className="w-full h-12 text-md font-medium">
-                            {isLoading ? 'Signing in...' : 'Login'}
-                            {!isLoading && (
-                                <kbd className="ml-2 hidden sm:inline-flex items-center gap-1 rounded border border-white/20 bg-white/10 px-1.5 font-mono text-[10px] font-medium text-white">
-                                    <span className="text-xs">⌘</span>Enter
-                                </kbd>
-                            )}
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full h-12 text-md font-medium"
-                            onClick={() => navigate('/teacher-register')}
-                        >
-                            Create an account
-                        </Button>
-                    </CardFooter>
-                </form>
-            </Card>
-        </div>
-    );
+                    );
 }
