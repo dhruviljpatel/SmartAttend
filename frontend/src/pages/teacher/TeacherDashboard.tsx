@@ -2,6 +2,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Header } from "../../components/Header";
 import { TeacherTabs } from "../../components/teacher/TeacherTabs";
+import { getAuthSession } from "@/lib/auth";
 
 export function TeacherDashboard() {
     const [searchParams] = useSearchParams();
@@ -27,10 +28,10 @@ export function TeacherDashboard() {
     const teacherName = getTeacherName();
 
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        // Protect route: redirect to login if not authenticated
-        if (!token) {
-            navigate("/teacher-login");
+        const { role } = getAuthSession();
+        // Protect route: only authenticated teachers can access
+        if (role !== 'teacher') {
+            navigate("/teacher-login", { replace: true });
         }
     }, [navigate]);
 

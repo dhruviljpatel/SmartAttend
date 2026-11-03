@@ -4,6 +4,8 @@ import { TeacherLogin } from './pages/teacher/TeacherLogin';
 import { TeacherRegister } from './pages/teacher/TeacherRegister';
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard';
 import { StudentLogin } from './pages/student/StudentLogin';
+import { StudentDashboard } from './pages/student/StudentDashboard';
+
 function App() {
     return (
         <Routes>
@@ -12,8 +14,9 @@ function App() {
             <Route path='/teacher-register' element={<TeacherRegister />} />
             <Route path='/teacher/dashboard' element={<TeacherDashboard />} />
             <Route path='/student-login' element={<StudentLogin />} />
+            <Route path='/student/dashboard' element={<StudentDashboard />} />
         </Routes>
-    )
+    );
 }
 
-export default App
+export default App;

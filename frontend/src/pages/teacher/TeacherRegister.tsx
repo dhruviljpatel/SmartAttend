@@ -1,15 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { ChevronLeft } from 'lucide-react';
+import { ChevronLeft, GraduationCap } from 'lucide-react';
 import { api } from '@/lib/api';
+import { getAuthSession } from '@/lib/auth';
 
 export function TeacherRegister() {
     const navigate = useNavigate();
+
+    // Prevent logged-in users from accessing registration
+    useEffect(() => {
+        const { role } = getAuthSession();
+        if (role === 'teacher') {
+            navigate('/teacher/dashboard', { replace: true });
+        } else if (role === 'student') {
+            navigate('/student/dashboard', { replace: true });
+        }
+    }, [navigate]);
 
     const [formData, setFormData] = useState({
         username: '',
@@ -69,7 +80,10 @@ export function TeacherRegister() {
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </Button>
-                <CardHeader className="text-center pb-8 pt-12">
+                <CardHeader className="text-center pb-8 pt-10">
+                    <div className="mx-auto mb-3 flex items-center justify-center h-14 w-14 bg-black text-white rounded-2xl shadow-lg">
+                        <GraduationCap size={28} />
+                    </div>
                     <CardTitle className="text-3xl font-bold tracking-tight">Teacher Registration</CardTitle>
                     <CardDescription>Create a new teacher account</CardDescription>
                 </CardHeader>
