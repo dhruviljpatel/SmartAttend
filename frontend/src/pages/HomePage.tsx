@@ -46,13 +46,13 @@ export function HomePage() {
             <div className="absolute top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-purple-200/50 blur-[120px]" />
 
             <div className="relative z-10 flex flex-col items-center max-w-3xl w-full">
-                <div className="mb-6 flex items-center justify-center h-20 w-20 bg-black text-white rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300">
-                    <GraduationCap size={40} />
+                <div className="mb-6 flex items-center justify-center h-16 w-16 sm:h-20 sm:w-20 bg-black text-white rounded-2xl shadow-xl hover:scale-105 transition-transform duration-300">
+                    <GraduationCap className="w-8 h-8 sm:w-10 sm:h-10" />
                 </div>
-                <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight mb-3 sm:mb-4 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 to-gray-600">
                     Smart Attend
                 </h1>
-                <p className="text-xl md:text-2xl text-gray-500 mb-8 max-w-2xl font-light">
+                <p className="text-base sm:text-xl md:text-2xl text-gray-500 mb-6 sm:mb-8 max-w-2xl font-light px-2">
                     Streamlining attendance management for modern educational institutions.
                 </p>
 
@@ -109,33 +109,33 @@ export function HomePage() {
                 )}
 
                 {/* PORTAL ACTIONS */}
-                <div className="flex gap-4 md:gap-6 flex-col sm:flex-row w-full max-w-md md:max-w-xl justify-center">
+                <div className="flex gap-3 sm:gap-4 md:gap-6 flex-col sm:flex-row w-full max-w-md md:max-w-xl justify-center px-2">
                     <Button
                         size="lg"
-                        className={`w-full sm:w-auto text-lg h-14 px-8 rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 ${
+                        className={`w-full sm:w-auto text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 rounded-2xl sm:rounded-full shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 ${
                             role === 'teacher'
                                 ? 'bg-indigo-600 hover:bg-indigo-700 text-white ring-4 ring-indigo-200'
                                 : ''
                         }`}
                         onClick={handleTeacherPortalClick}
                     >
-                        <Users className="mr-2 h-5 w-5" />
-                        {role === 'teacher' ? 'Open Teacher Dashboard' : 'Teacher Portal'}
-                        {role === 'teacher' && <ArrowRight className="ml-2 h-5 w-5" />}
+                        <Users className="mr-2 h-5 w-5 shrink-0" />
+                        <span>{role === 'teacher' ? 'Open Teacher Dashboard' : 'Teacher Portal'}</span>
+                        {role === 'teacher' && <ArrowRight className="ml-2 h-5 w-5 shrink-0" />}
                     </Button>
                     <Button
                         variant="outline"
                         size="lg"
-                        className={`w-full sm:w-auto text-lg h-14 px-8 rounded-full border-2 hover:bg-gray-50 transition-all hover:-translate-y-1 bg-white/50 backdrop-blur-sm ${
+                        className={`w-full sm:w-auto text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 rounded-2xl sm:rounded-full border-2 hover:bg-gray-50 transition-all hover:-translate-y-1 bg-white/50 backdrop-blur-sm ${
                             role === 'student'
                                 ? 'border-blue-500 bg-blue-50/50 ring-4 ring-blue-100'
                                 : ''
                         }`}
                         onClick={handleStudentPortalClick}
                     >
-                        <GraduationCap className="mr-2 h-5 w-5 text-gray-700" />
-                        {role === 'student' ? 'Open Student Dashboard' : 'Student Portal'}
-                        {role === 'student' && <ArrowRight className="ml-2 h-5 w-5" />}
+                        <GraduationCap className="mr-2 h-5 w-5 text-gray-700 shrink-0" />
+                        <span>{role === 'student' ? 'Open Student Dashboard' : 'Student Portal'}</span>
+                        {role === 'student' && <ArrowRight className="ml-2 h-5 w-5 shrink-0" />}
                     </Button>
                 </div>
             </div>

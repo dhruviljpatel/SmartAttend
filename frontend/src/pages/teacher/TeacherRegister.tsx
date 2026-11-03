@@ -70,22 +70,22 @@ export function TeacherRegister() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6 md:p-8">
+        <div className="min-h-screen bg-gray-50 flex items-center justify-center p-3 sm:p-6 md:p-8">
             <Card className="w-full max-w-md md:max-w-lg relative shadow-xl border-0 transition-all duration-300">
                 <Button 
                     variant="ghost" 
                     size="icon" 
-                    className="absolute left-4 top-4 rounded-full text-gray-500 hover:text-gray-900"
+                    className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900"
                     onClick={() => navigate('/')}
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </Button>
-                <CardHeader className="text-center pb-8 pt-10">
-                    <div className="mx-auto mb-3 flex items-center justify-center h-14 w-14 bg-black text-white rounded-2xl shadow-lg">
-                        <GraduationCap size={28} />
+                <CardHeader className="text-center pb-6 sm:pb-8 pt-8 sm:pt-10 px-4">
+                    <div className="mx-auto mb-3 flex items-center justify-center h-12 w-12 sm:h-14 sm:w-14 bg-black text-white rounded-2xl shadow-lg">
+                        <GraduationCap className="w-6 h-6 sm:w-7 sm:h-7" />
                     </div>
-                    <CardTitle className="text-3xl font-bold tracking-tight">Teacher Registration</CardTitle>
-                    <CardDescription>Create a new teacher account</CardDescription>
+                    <CardTitle className="text-2xl sm:text-3xl font-bold tracking-tight">Teacher Registration</CardTitle>
+                    <CardDescription className="text-xs sm:text-sm">Create a new teacher account</CardDescription>
                 </CardHeader>
                 <form onSubmit={handleSubmit}>
                     <CardContent className="space-y-4">

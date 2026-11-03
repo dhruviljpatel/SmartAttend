@@ -187,26 +187,26 @@ export const StudentLogin = () => {
     };
 
     return (
-        <div className="min-h-[100dvh] bg-slate-50 flex items-center justify-center p-3 sm:p-6">
+        <div className="min-h-[100dvh] bg-slate-50 flex items-center justify-center p-2 sm:p-6 py-4">
             <Card className="w-full max-w-md md:max-w-xl lg:max-w-2xl relative shadow-2xl border-0 overflow-hidden rounded-3xl bg-white transition-all duration-300">
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="absolute left-4 top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
+                    className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
                     onClick={() => navigate('/')}
                 >
                     <ChevronLeft className="h-5 w-5" />
                 </Button>
 
-                <CardHeader className="text-center pb-2 pt-6 relative">
+                <CardHeader className="text-center pb-2 pt-5 sm:pt-6 relative px-4">
                     <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-blue-50/80 to-transparent -z-10" />
-                    <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
-                        <Icons8FaceScan className="h-6 w-6 text-blue-600" />
+                    <div className="mx-auto mb-2 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
+                        <Icons8FaceScan className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
                     </div>
-                    <CardTitle className="text-2xl font-bold tracking-tight text-gray-900">
+                    <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
                         SmartAttend Student Portal
                     </CardTitle>
-                    <CardDescription className="text-sm text-gray-500 mt-1">
+                    <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
                         {step === 'capture' && 'Position your face in the center of the frame to log in'}
                         {step === 'analyzing' && 'Matching your face with enrolled students...'}
                         {step === 'recognized' && 'Facial verification successful!'}
@@ -216,9 +216,9 @@ export const StudentLogin = () => {
 
                     {/* ENROLLMENT BADGE IF SCANNED/ARRIVED VIA LINK */}
                     {enrollCode && (
-                        <div className="mt-3 mx-auto inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-xs">
+                        <div className="mt-2.5 mx-auto inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-xs">
                             <QrCode className="w-3.5 h-3.5 text-indigo-600" />
-                            <span>Auto-enrolling in subject:</span>
+                            <span>Auto-enrolling in:</span>
                             <Badge className="bg-indigo-600 hover:bg-indigo-600 text-white font-mono text-[11px] px-2 py-0">
                                 {enrollCode}
                             </Badge>
@@ -226,10 +226,10 @@ export const StudentLogin = () => {
                     )}
                 </CardHeader>
 
-                <CardContent className="p-4 sm:p-6">
+                <CardContent className="p-3 sm:p-6">
                     {/* STEP 1: CAMERA CAPTURE */}
                     {step === 'capture' && (
-                        <div className="bg-slate-50 rounded-2xl p-2 border border-gray-100 shadow-inner">
+                        <div className="bg-slate-50 rounded-2xl p-1.5 sm:p-2 border border-gray-100 shadow-inner">
                             <CameraCapture
                                 onContinue={handleCaptureContinue}
                                 isAuthenticating={false}
@@ -353,19 +353,19 @@ export const StudentLogin = () => {
                                     </div>
                                 )}
 
-                                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                                     <Button
                                         type="button"
                                         variant="outline"
                                         onClick={handleReset}
-                                        className="flex-1 h-11 rounded-xl border-gray-200"
+                                        className="w-full h-12 rounded-2xl border-2 border-gray-200 hover:bg-gray-100 text-gray-700 font-semibold text-sm sm:text-base order-2 sm:order-1 transition-all active:scale-[0.98]"
                                     >
                                         Retake Photo
                                     </Button>
                                     <Button
                                         type="submit"
                                         disabled={isRegistering || !studentName.trim()}
-                                        className="flex-[2] h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium shadow-md shadow-blue-500/20"
+                                        className="w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm sm:text-base shadow-md hover:shadow-lg transition-all active:scale-[0.98] order-1 sm:order-2"
                                     >
                                         {isRegistering ? (
                                             <div className="flex items-center gap-2">

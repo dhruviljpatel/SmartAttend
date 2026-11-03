@@ -173,12 +173,12 @@ export function TakeAttendance() {
     };
 
     return (
-        <div className="flex flex-col gap-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm relative">
+        <div className="flex flex-col gap-6 bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm relative">
             {/* SECTION HEADER */}
             <div className="flex justify-between items-center pb-4 border-b border-gray-100 flex-wrap gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                        <Camera className="w-6 h-6 text-indigo-600" />
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                        <Camera className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
                         Take AI Attendance
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
@@ -186,7 +186,7 @@ export function TakeAttendance() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5 w-full sm:w-auto">
                     {/* Hidden file input */}
                     <input
                         type="file"
@@ -201,7 +201,7 @@ export function TakeAttendance() {
                     <Button
                         variant="outline"
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-gray-700 font-semibold rounded-xl h-10 px-4"
+                        className="text-gray-700 font-semibold rounded-xl h-10 px-3 sm:px-4 flex-1 sm:flex-initial justify-center text-xs sm:text-sm"
                     >
                         <Upload className="w-4 h-4 mr-2" />
                         Upload Photos
@@ -210,7 +210,7 @@ export function TakeAttendance() {
                     {/* Open Camera Button */}
                     <Button
                         onClick={() => setIsCameraOpen(true)}
-                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl h-10 px-4 shadow-sm"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl h-10 px-3 sm:px-4 shadow-sm flex-1 sm:flex-initial justify-center text-xs sm:text-sm"
                     >
                         <Camera className="w-4 h-4 mr-2" />
                         Open Camera
@@ -523,7 +523,7 @@ export function TakeAttendance() {
 
                     {/* RECTANGULAR DROPDOWN NOTICE (FADES AFTER A FEW SECONDS) */}
                     {showVoiceNotice && (
-                        <div className="absolute left-0 sm:left-auto sm:right-0 bottom-full mb-3 z-30 w-80 p-3.5 bg-gray-900 text-white rounded-2xl shadow-xl border border-gray-800 text-xs animate-in fade-in slide-in-from-bottom-2 duration-200">
+                        <div className="absolute left-0 sm:left-auto sm:right-0 bottom-full mb-3 z-30 w-[calc(100vw-3rem)] max-w-sm sm:w-80 p-3.5 bg-gray-900 text-white rounded-2xl shadow-xl border border-gray-800 text-xs animate-in fade-in slide-in-from-bottom-2 duration-200">
                             <div className="flex items-start gap-2.5">
                                 <Sparkles className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                                 <div>

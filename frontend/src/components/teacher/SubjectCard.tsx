@@ -29,7 +29,7 @@ export function SubjectCard({ id, name, code, section, students, classes, onDele
                                 variant="ghost"
                                 size="icon"
                                 onClick={() => onDelete(id)}
-                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity -mr-2 -mt-1 rounded-lg"
+                                className="h-8 w-8 text-gray-400 hover:text-red-600 hover:bg-red-50 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity -mr-2 -mt-1 rounded-lg"
                                 title="Delete subject"
                             >
                                 <Trash2 className="w-4 h-4" />

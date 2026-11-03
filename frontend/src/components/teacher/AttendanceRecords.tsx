@@ -53,11 +53,11 @@ export function AttendanceRecords() {
     const totalAbsent = records.filter((r) => !r.isPresent).length;
 
     return (
-        <div className="flex flex-col gap-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+        <div className="flex flex-col gap-6 bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-100 gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                        <Users className="w-6 h-6 text-indigo-600" />
+                    <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                        <Users className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
                         Attendance Records
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
@@ -65,9 +65,9 @@ export function AttendanceRecords() {
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
                     {/* Filter buttons */}
-                    <div className="flex items-center bg-gray-100 p-1 rounded-xl text-xs font-semibold">
+                    <div className="flex items-center bg-gray-100 p-1 rounded-xl text-xs font-semibold overflow-x-auto">
                         <button
                             type="button"
                             onClick={() => setFilterStatus('all')}
@@ -116,7 +116,7 @@ export function AttendanceRecords() {
                 </div>
             </div>
 
-            <div className="rounded-xl border border-gray-200/80 overflow-hidden shadow-xs">
+            <div className="rounded-xl border border-gray-200/80 overflow-x-auto shadow-xs">
                 <Table className="min-w-[650px]">
                     <TableHeader className="bg-slate-50/70 border-b border-gray-200">
                         <TableRow>

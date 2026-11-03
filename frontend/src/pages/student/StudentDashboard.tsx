@@ -209,13 +209,13 @@ export const StudentDashboard = () => {
         <div className="min-h-screen bg-slate-50 flex flex-col">
             <Header />
 
-            <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+            <main className="flex-1 max-w-6xl w-full mx-auto p-3.5 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
                 {/* SUCCESS NOTIFICATION BANNER (from QR scan / auto enrollment) */}
                 {enrolledBanner && (
-                    <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-emerald-800 text-sm animate-in fade-in duration-300">
+                    <div className="p-3.5 sm:p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between text-emerald-800 text-sm animate-in fade-in duration-300">
                         <div className="flex items-center gap-2">
                             <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
-                            <span className="font-semibold">{enrolledBanner}</span>
+                            <span className="font-semibold text-xs sm:text-sm">{enrolledBanner}</span>
                         </div>
                         <Button
                             variant="ghost"
@@ -233,30 +233,30 @@ export const StudentDashboard = () => {
                 )}
 
                 {/* WELCOME BANNER */}
-                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white p-6 sm:p-8 shadow-xl">
+                <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-900 text-white p-5 sm:p-8 shadow-xl">
                     <div className="absolute right-0 top-0 bottom-0 w-1/3 bg-white/5 transform skew-x-12 pointer-events-none" />
                     <div className="relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                         <div>
-                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-blue-100 mb-3 border border-white/10">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md text-xs font-medium text-blue-100 mb-2.5 sm:mb-3 border border-white/10">
                                 <Icons8ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                                 Facial Verification Active
                             </div>
-                            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight">
+                            <h1 className="text-xl sm:text-3xl font-extrabold tracking-tight">
                                 Welcome back, {student?.name}!
                             </h1>
-                            <p className="text-sm text-blue-100 mt-1">
+                            <p className="text-xs sm:text-sm text-blue-100 mt-1">
                                 Student ID: #{student?.id} • SmartAttend Portal
                             </p>
                         </div>
 
-                        <div className="flex items-center gap-3">
+                        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
                             <Button
                                 onClick={() => {
                                     setEnrollError(null);
                                     setEnrollSuccess(null);
                                     setIsEnrollModalOpen(true);
                                 }}
-                                className="bg-white text-indigo-900 hover:bg-blue-50 font-semibold shadow-md rounded-2xl h-11 px-5"
+                                className="bg-white text-indigo-900 hover:bg-blue-50 font-semibold shadow-md rounded-2xl h-11 px-5 w-full sm:w-auto justify-center"
                             >
                                 <Plus className="w-4 h-4 mr-2" />
                                 Enroll in Subject
@@ -320,11 +320,11 @@ export const StudentDashboard = () => {
                 </div>
 
                 {/* ENROLLED SUBJECTS SECTION (SIMILAR TO TEACHER MANAGE SUBJECTS) */}
-                <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm space-y-6">
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-100 gap-4">
+                <div className="bg-white p-4 sm:p-6 rounded-2xl border border-gray-200 shadow-sm space-y-5 sm:space-y-6">
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-4 border-b border-gray-100 gap-3 sm:gap-4">
                         <div>
-                            <h2 className="text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
-                                <BookOpen className="w-6 h-6 text-indigo-600" />
+                            <h2 className="text-xl sm:text-2xl font-bold text-gray-900 tracking-tight flex items-center gap-2">
+                                <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-indigo-600" />
                                 My Enrolled Subjects
                             </h2>
                             <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
@@ -338,7 +338,7 @@ export const StudentDashboard = () => {
                                 setEnrollSuccess(null);
                                 setIsEnrollModalOpen(true);
                             }}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-11 px-5 shadow-md shadow-indigo-600/20"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl h-11 px-5 shadow-md shadow-indigo-600/20 w-full sm:w-auto justify-center"
                         >
                             <Plus className="w-4 h-4 mr-2" />
                             Enroll with Subject Code
@@ -516,23 +516,23 @@ export const StudentDashboard = () => {
                                 </p>
                             </div>
 
-                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 mt-6">
+                            <div className="flex flex-col-reverse sm:flex-row items-center justify-end gap-2.5 pt-4 border-t border-gray-100 mt-6">
                                 <Button
                                     type="button"
                                     variant="outline"
                                     onClick={() => setIsEnrollModalOpen(false)}
                                     disabled={isEnrolling}
-                                    className="h-11 rounded-xl px-5 border-gray-200"
+                                    className="w-full sm:w-auto h-11 rounded-xl px-5 border-gray-200"
                                 >
                                     Cancel
                                 </Button>
                                 <Button
                                     type="submit"
                                     disabled={isEnrolling || !subjectCodeInput.trim()}
-                                    className="h-11 rounded-xl px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20"
+                                    className="w-full sm:w-auto h-11 rounded-xl px-6 bg-indigo-600 hover:bg-indigo-700 text-white font-medium shadow-md shadow-indigo-500/20"
                                 >
                                     {isEnrolling ? (
-                                        <div className="flex items-center gap-2">
+                                        <div className="flex items-center justify-center gap-2">
                                             <Loader2 className="w-4 h-4 animate-spin" />
                                             <span>Enrolling...</span>
                                         </div>
