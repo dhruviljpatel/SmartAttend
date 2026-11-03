@@ -231,6 +231,10 @@ def verify_or_find_student(image_np: np.ndarray, threshold: Optional[float] = No
 def bytes_to_image_np(image_bytes: bytes) -> np.ndarray:
     """Converts raw image bytes (JPEG, PNG, etc.) to an RGB NumPy array."""
     image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    # Downscale very large photos (e.g. 12MP-48MP mobile cameras) to keep memory usage minimal
+    max_dim = 1600
+    if max(image.size) > max_dim:
+        image.thumbnail((max_dim, max_dim))
     return np.array(image)
 
 

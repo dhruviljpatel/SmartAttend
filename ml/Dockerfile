@@ -2,13 +2,17 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Install system dependencies required for cmake, dlib, and opencv/image processing
+# Install minimal runtime libraries (no heavy compilers needed with precompiled wheels)
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    build-essential \
-    cmake \
-    libopenblas-dev \
-    liblapack-dev \
+    libopenblas0 \
+    liblapack3 \
+    libx11-6 \
+    libgl1 \
+    libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
+
+# Safety limit: restrict CMake/GCC parallel jobs to 1 thread to avoid memory spikes
+ENV CMAKE_BUILD_PARALLEL_LEVEL=1
 
 COPY requirements.txt .
 
@@ -21,4 +25,3 @@ ENV PORT=8000
 EXPOSE 8000
 
 CMD ["sh", "-c", "uvicorn face:app --host 0.0.0.0 --port ${PORT}"]
-
