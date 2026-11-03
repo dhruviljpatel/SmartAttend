@@ -187,49 +187,49 @@ export const StudentLogin = () => {
     };
 
     return (
-            <div className="min-h-[100dvh] bg-slate-50 flex items-center justify-center p-2 sm:p-6 py-4">
-                <Card className="w-full max-w-md md:max-w-xl lg:max-w-2xl relative shadow-2xl border-0 overflow-hidden rounded-3xl bg-white transition-all duration-300">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
-                        onClick={() => navigate('/')}
-                    >
-                        <ChevronLeft className="h-5 w-5" />
-                    </Button>
+        <div className="min-h-[100dvh] bg-slate-50 flex flex-col justify-center items-center p-3 sm:p-6 py-4 sm:py-8 overflow-y-auto">
+            <Card className="w-full max-w-md md:max-w-xl lg:max-w-2xl my-auto relative shadow-2xl border-0 rounded-3xl bg-white transition-all duration-300">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute left-3 top-3 sm:left-4 sm:top-4 rounded-full text-gray-500 hover:text-gray-900 z-10"
+                    onClick={() => navigate('/')}
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
 
-                        <CardHeader className="text-center pb-2 pt-5 sm:pt-6 relative px-4">
-                            <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-blue-50/80 to-transparent -z-10" />
-                                <div className="mx-auto mb-2 flex h-11 w-11 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
-                                    <Icons8FaceScan className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
-                                </div>
-                                    <CardTitle className="text-xl sm:text-2xl font-bold tracking-tight text-gray-900">
-                                        SmartAttend Student Portal
-                                    </CardTitle>
-                                        <CardDescription className="text-xs sm:text-sm text-gray-500 mt-1">
-                                            {step === 'capture' && 'Position your face in the center of the frame to log in'}
-                                            {step === 'analyzing' && 'Matching your face with enrolled students...'}
-                                            {step === 'recognized' && 'Facial verification successful!'}
-                                            {step === 'register' && 'New student detected! Complete your quick profile'}
-                                            {step === 'error' && 'Authentication assistance needed'}
-                                        </CardDescription>
+                <CardHeader className="text-center pb-2 pt-4 sm:pt-6 relative px-4">
+                    <div className="absolute top-0 left-0 w-full h-20 bg-gradient-to-b from-blue-50/80 to-transparent rounded-t-3xl -z-10" />
+                    <div className="mx-auto mb-2 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 shadow-sm">
+                        <Icons8FaceScan className="h-5 w-5 sm:h-6 sm:w-6 text-blue-600" />
+                    </div>
+                    <CardTitle className="text-lg sm:text-2xl font-bold tracking-tight text-gray-900">
+                        SmartAttend Student Portal
+                    </CardTitle>
+                    <CardDescription className="text-xs sm:text-sm text-gray-500 mt-0.5 sm:mt-1">
+                        {step === 'capture' && 'Position your face in the center of the frame to log in'}
+                        {step === 'analyzing' && 'Matching your face with enrolled students...'}
+                        {step === 'recognized' && 'Facial verification successful!'}
+                        {step === 'register' && 'New student detected! Complete your quick profile'}
+                        {step === 'error' && 'Authentication assistance needed'}
+                    </CardDescription>
 
-                                        {/* ENROLLMENT BADGE IF SCANNED/ARRIVED VIA LINK */}
-                                        {enrollCode && (
-                        <div className="mt-2.5 mx-auto inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-xs">
+                    {/* ENROLLMENT BADGE IF SCANNED/ARRIVED VIA LINK */}
+                    {enrollCode && (
+                        <div className="mt-2 mx-auto inline-flex items-center gap-1.5 sm:gap-2 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-semibold shadow-xs">
                             <QrCode className="w-3.5 h-3.5 text-indigo-600" />
-                            <span>Auto-enrolling in:</span>
-                            <Badge className="bg-indigo-600 hover:bg-indigo-600 text-white font-mono text-[11px] px-2 py-0">
+                            <span>Auto-enrolling:</span>
+                            <Badge className="bg-indigo-600 hover:bg-indigo-600 text-white font-mono text-[11px] px-1.5 sm:px-2 py-0">
                                 {enrollCode}
                             </Badge>
                         </div>
                     )}
                 </CardHeader>
 
-                <CardContent className="p-3 sm:p-6">
+                <CardContent className="p-3 sm:p-6 pt-1 sm:pt-2">
                     {/* STEP 1: CAMERA CAPTURE */}
                     {step === 'capture' && (
-                        <div className="bg-slate-50 rounded-2xl p-1.5 sm:p-2 border border-gray-100 shadow-inner">
+                        <div className="bg-slate-50 rounded-2xl p-2 sm:p-3 border border-gray-100 shadow-inner">
                             <CameraCapture
                                 onContinue={handleCaptureContinue}
                                 isAuthenticating={false}
@@ -239,22 +239,22 @@ export const StudentLogin = () => {
 
                     {/* STEP 2: ANALYZING STATE */}
                     {step === 'analyzing' && (
-                        <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
-                            <div className="relative mb-6">
+                        <div className="flex flex-col items-center justify-center py-10 px-4 text-center">
+                            <div className="relative mb-5">
                                 {capturedImage && (
                                     <img
                                         src={capturedImage}
                                         alt="Face scan"
-                                        className="w-32 h-32 rounded-full object-cover shadow-lg border-4 border-blue-500/20"
+                                        className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover shadow-lg border-4 border-blue-500/20"
                                     />
                                 )}
                                 <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin" />
                             </div>
-                            <h3 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <h3 className="text-base sm:text-lg font-semibold text-gray-900 flex items-center gap-2">
                                 <Sparkles className="w-5 h-5 text-blue-600 animate-pulse" />
                                 Processing Facial Embedding
                             </h3>
-                            <p className="text-sm text-gray-500 mt-1 max-w-sm">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1 max-w-sm">
                                 Running Euclidean face similarity check against database records...
                             </p>
                         </div>
@@ -269,10 +269,10 @@ export const StudentLogin = () => {
                             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 mb-2">
                                 <CheckCircle2 className="w-3.5 h-3.5" /> Face Verified
                             </span>
-                            <h3 className="text-2xl font-bold text-gray-900">
+                            <h3 className="text-xl sm:text-2xl font-bold text-gray-900">
                                 Welcome, {recognizedStudent.name}!
                             </h3>
-                            <p className="text-sm text-gray-500 mt-1">
+                            <p className="text-xs sm:text-sm text-gray-500 mt-1">
                                 Student ID: #{recognizedStudent.id}
                             </p>
                             {enrollCode && (
@@ -284,6 +284,7 @@ export const StudentLogin = () => {
                                 Redirecting to your dashboard...
                             </p>
                             <Button
+                                size="xl"
                                 onClick={() =>
                                     navigate(
                                         enrollCode
@@ -291,7 +292,7 @@ export const StudentLogin = () => {
                                             : '/student/dashboard'
                                     )
                                 }
-                                className="mt-6 w-full max-w-xs rounded-xl shadow-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
+                                className="mt-5 w-full max-w-xs min-h-[48px] rounded-2xl shadow-md bg-emerald-600 hover:bg-emerald-700 text-white font-medium"
                             >
                                 Proceed to Dashboard
                             </Button>
@@ -301,16 +302,16 @@ export const StudentLogin = () => {
                     {/* STEP 4: REGISTER NEW STUDENT */}
                     {step === 'register' && (
                         <div className="py-2 animate-in fade-in duration-300">
-                            <div className="flex items-center gap-4 bg-blue-50/70 border border-blue-100 rounded-2xl p-3 mb-6">
+                            <div className="flex items-center gap-3.5 bg-blue-50/70 border border-blue-100 rounded-2xl p-3 mb-5">
                                 {capturedImage ? (
                                     <img
                                         src={capturedImage}
                                         alt="Captured preview"
-                                        className="w-16 h-16 rounded-xl object-cover shadow-sm border border-blue-200"
+                                        className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl object-cover shadow-sm border border-blue-200 shrink-0"
                                     />
                                 ) : (
-                                    <div className="w-16 h-16 rounded-xl bg-blue-200 flex items-center justify-center text-blue-700">
-                                        <Icons8FaceScan className="w-8 h-8" />
+                                    <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-blue-200 flex items-center justify-center text-blue-700 shrink-0">
+                                        <Icons8FaceScan className="w-7 h-7" />
                                     </div>
                                 )}
                                 <div>
@@ -331,7 +332,7 @@ export const StudentLogin = () => {
 
                             <form onSubmit={handleRegisterSubmit} className="space-y-4">
                                 <div className="space-y-1.5 text-left">
-                                    <Label htmlFor="studentName" className="text-sm font-semibold text-gray-700">
+                                    <Label htmlFor="studentName" className="text-xs sm:text-sm font-semibold text-gray-700">
                                         Your Full Name <span className="text-red-500">*</span>
                                     </Label>
                                     <Input
@@ -340,7 +341,7 @@ export const StudentLogin = () => {
                                         value={studentName}
                                         onChange={(e) => setStudentName(e.target.value)}
                                         placeholder="e.g. Alex Johnson"
-                                        className="h-11 rounded-xl text-base"
+                                        className="h-11 rounded-xl text-sm sm:text-base"
                                         autoFocus
                                         required
                                     />
@@ -353,27 +354,29 @@ export const StudentLogin = () => {
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                                <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 pt-2">
                                     <Button
                                         type="button"
                                         variant="outline"
+                                        size="xl"
                                         onClick={handleReset}
-                                        className="w-full h-12 rounded-2xl border-2 border-gray-200 hover:bg-gray-100 text-gray-700 font-semibold text-sm sm:text-base order-2 sm:order-1 transition-all active:scale-[0.98]"
+                                        className="w-full min-h-[50px] sm:min-h-[52px] h-auto py-3 px-2 sm:px-4 rounded-2xl border-2 border-gray-200 hover:bg-gray-100 text-gray-700 font-semibold text-xs sm:text-sm md:text-base transition-all active:scale-[0.98] flex items-center justify-center"
                                     >
-                                        Retake Photo
+                                        <span>Retake<span className="hidden min-[380px]:inline">&nbsp;Photo</span></span>
                                     </Button>
                                     <Button
                                         type="submit"
+                                        size="xl"
                                         disabled={isRegistering || !studentName.trim()}
-                                        className="w-full h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm sm:text-base shadow-md hover:shadow-lg transition-all active:scale-[0.98] order-1 sm:order-2"
+                                        className="w-full min-h-[50px] sm:min-h-[52px] h-auto py-3 px-2 sm:px-4 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs sm:text-sm md:text-base shadow-md hover:shadow-lg transition-all active:scale-[0.98] flex items-center justify-center"
                                     >
                                         {isRegistering ? (
                                             <div className="flex items-center gap-2">
                                                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                                                <span>Registering...</span>
+                                                <span className="text-xs sm:text-sm">Registering...</span>
                                             </div>
                                         ) : (
-                                            'Register & Sign In'
+                                            <span>Register & Sign In</span>
                                         )}
                                     </Button>
                                 </div>
@@ -394,8 +397,9 @@ export const StudentLogin = () => {
                                 {errorMessage || 'Could not verify face. Please ensure proper camera alignment.'}
                             </p>
                             <Button
+                                size="xl"
                                 onClick={handleReset}
-                                className="w-full max-w-xs mx-auto h-11 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-medium"
+                                className="w-full max-w-xs mx-auto min-h-[48px] rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-medium"
                             >
                                 Try Again
                             </Button>
@@ -404,5 +408,5 @@ export const StudentLogin = () => {
                 </CardContent>
             </Card>
         </div>
-                                        );
+    );
 };
