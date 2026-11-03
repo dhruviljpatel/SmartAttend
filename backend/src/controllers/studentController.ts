@@ -447,9 +447,15 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
       faceEmbedding: mlData.face_embedding,
       message: 'Face detected, but no matching student record found. Please enter your name to register.',
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error during face login:', error);
-    res.status(500).json({ error: 'Internal server error during face authentication.' });
+    if (error?.code === 'ECONNREFUSED' || error?.cause?.code === 'ECONNREFUSED' || error?.message?.includes('fetch failed')) {
+      res.status(503).json({
+        error: `Facial recognition ML service is unreachable at ${ML_SERVICE_URL}. Please verify that the Python ML service is running (e.g. uvicorn face:app --port 8000).`,
+      });
+      return;
+    }
+    res.status(500).json({ error: error?.message || 'Internal server error during face authentication.' });
   }
 };
 
