@@ -1,9 +1,10 @@
 import os
 import io
+import json
 import base64
 from typing import Optional, List, Dict, Any
 from dotenv import load_dotenv
-from PIL import Image
+from PIL import Image, ImageOps
 
 import dlib
 import numpy as np
@@ -18,11 +19,11 @@ from pydantic import BaseModel
 # Load environment variables from .env
 load_dotenv()
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000")
+BACKEND_URL = os.getenv("BACKEND_URL", "http://localhost:5000").rstrip('/')
 RESEMBLANCE_THRESHOLD = float(os.getenv("RESEMBLANCE_THRESHOLD", "0.6"))
 
 # ==========================================
-# ML Pipeline (Original Logic Preserved)
+# ML Pipeline (Original Logic Preserved & Enhanced)
 # ==========================================
 
 # Cache models in memory to avoid reading heavy dlib weights on every request
@@ -42,9 +43,17 @@ def load_dlib_models():
     return _CACHED_MODELS
 
 
-def get_face_embeddings(image_np):
+def get_face_embeddings(image_np: np.ndarray) -> List[np.ndarray]:
     detector, sp, facerec = load_dlib_models()
     faces = detector(image_np, 1)
+
+    # If no face is detected with standard 1x upsampling, attempt 2x upsampling
+    # This helps detect smaller faces, faces slightly further from the camera, or softer lighting
+    if len(faces) == 0:
+        try:
+            faces = detector(image_np, 2)
+        except Exception:
+            pass
 
     embeddings = []
 
@@ -54,6 +63,22 @@ def get_face_embeddings(image_np):
         embeddings.append(np.array(face_descriptor))
 
     return embeddings
+
+
+def parse_embedding_safe(emb: Any) -> Optional[np.ndarray]:
+    """Safely extracts a 128-d float numpy vector from a list, np array, or stringified JSON."""
+    if emb is None:
+        return None
+    try:
+        if isinstance(emb, str):
+            emb = json.loads(emb)
+        if isinstance(emb, (list, tuple, np.ndarray)):
+            arr = np.array(emb, dtype=np.float64)
+            if arr.ndim == 1 and len(arr) == 128:
+                return arr
+    except Exception as e:
+        print(f"[ML Service] Could not parse student embedding: {e}")
+    return None
 
 
 def get_all_students(backend_url: Optional[str] = None) -> List[Dict[str, Any]]:
@@ -75,11 +100,11 @@ def get_all_students(backend_url: Optional[str] = None) -> List[Dict[str, Any]]:
         return []
 
 
-def get_trained_model():
+def get_trained_model(backend_url: Optional[str] = None):
     X = []
     y = []
 
-    student_db = get_all_students()
+    student_db = get_all_students(backend_url)
 
     if not student_db:
         return None
@@ -87,8 +112,9 @@ def get_trained_model():
     for student in student_db:
         embedding = student.get('face_embedding') or student.get('faceEmbedding')
         student_id = student.get('student_id') or student.get('id')
-        if embedding and student_id is not None:
-            X.append(np.array(embedding))
+        parsed_emb = parse_embedding_safe(embedding)
+        if parsed_emb is not None and student_id is not None:
+            X.append(parsed_emb)
             y.append(student_id)
 
     if len(X) == 0:
@@ -109,12 +135,12 @@ def trained_classifier():
     return bool(model_data)
 
 
-def predict_attendance(class_image_np):
+def predict_attendance(class_image_np: np.ndarray, backend_url: Optional[str] = None):
     embeddings = get_face_embeddings(class_image_np)
 
     detected_students = {}
 
-    model_data = get_trained_model()
+    model_data = get_trained_model(backend_url)
 
     if not model_data:
         return detected_students, [], len(embeddings)
@@ -147,7 +173,7 @@ def predict_attendance(class_image_np):
 # Direct Embedding Matching (1-to-N Student Verification)
 # ==========================================
 
-def verify_or_find_student(image_np: np.ndarray, threshold: Optional[float] = None) -> Dict[str, Any]:
+def verify_or_find_student(image_np: np.ndarray, threshold: Optional[float] = None, backend_url: Optional[str] = None) -> Dict[str, Any]:
     """
     Direct 1-to-N Euclidean embedding distance matching for student login/auth:
     1. Extracts 128-d face embedding from query image.
@@ -180,17 +206,17 @@ def verify_or_find_student(image_np: np.ndarray, threshold: Optional[float] = No
         }
 
     query_embedding = embeddings[0]
-    student_db = get_all_students()
+    student_db = get_all_students(backend_url)
 
     best_match = None
     min_distance = float('inf')
 
     for student in student_db:
         emb = student.get('face_embedding') or student.get('faceEmbedding')
-        if emb:
+        parsed_emb = parse_embedding_safe(emb)
+        if parsed_emb is not None:
             try:
-                emb_np = np.array(emb, dtype=np.float64)
-                dist = float(np.linalg.norm(emb_np - query_embedding))
+                dist = float(np.linalg.norm(parsed_emb - query_embedding))
                 if dist < min_distance:
                     min_distance = dist
                     best_match = student
@@ -229,8 +255,14 @@ def verify_or_find_student(image_np: np.ndarray, threshold: Optional[float] = No
 # ==========================================
 
 def bytes_to_image_np(image_bytes: bytes) -> np.ndarray:
-    """Converts raw image bytes (JPEG, PNG, etc.) to an RGB NumPy array."""
-    image = Image.open(io.BytesIO(image_bytes)).convert("RGB")
+    """
+    Converts raw image bytes (JPEG, PNG, etc.) to an RGB NumPy array.
+    Automatically applies EXIF transpose to ensure smartphone camera orientations (portrait/landscape)
+    are upright before passing to face detection models.
+    """
+    raw_img = Image.open(io.BytesIO(image_bytes))
+    image = ImageOps.exif_transpose(raw_img)
+    image = image.convert("RGB")
     # Downscale very large photos (e.g. 12MP-48MP mobile cameras) to keep memory usage minimal
     max_dim = 1600
     if max(image.size) > max_dim:
@@ -268,6 +300,7 @@ app.add_middleware(
 
 class Base64ImageRequest(BaseModel):
     image_base64: str
+    backend_url: Optional[str] = None
 
 
 @app.get("/")
@@ -292,7 +325,7 @@ def check_train_status():
 
 
 @app.post("/verify-face")
-async def verify_face_endpoint(file: Optional[UploadFile] = File(None)):
+async def verify_face_endpoint(file: Optional[UploadFile] = File(None), backend_url: Optional[str] = Form(None)):
     """
     Verifies if a single face matches an existing student in the database.
     Used for 1-to-N student face login / authentication.
@@ -306,7 +339,7 @@ async def verify_face_endpoint(file: Optional[UploadFile] = File(None)):
     try:
         image_bytes = await file.read()
         image_np = bytes_to_image_np(image_bytes)
-        return verify_or_find_student(image_np)
+        return verify_or_find_student(image_np, backend_url=backend_url)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -322,7 +355,7 @@ def verify_face_base64_endpoint(payload: Base64ImageRequest):
     """
     try:
         image_np = base64_to_image_np(payload.image_base64)
-        return verify_or_find_student(image_np)
+        return verify_or_find_student(image_np, backend_url=payload.backend_url)
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
@@ -363,6 +396,7 @@ async def extract_embeddings_endpoint(file: Optional[UploadFile] = File(None)):
 def extract_embeddings_base64_endpoint(payload: Base64ImageRequest):
     """
     Extracts 128-dimensional face embedding(s) from a base64 encoded image string.
+    Does not require any connection to PostgreSQL or backend.
     """
     try:
         image_np = base64_to_image_np(payload.image_base64)
@@ -381,7 +415,7 @@ def extract_embeddings_base64_endpoint(payload: Base64ImageRequest):
 
 
 @app.post("/predict-attendance")
-async def predict_attendance_endpoint(file: Optional[UploadFile] = File(None)):
+async def predict_attendance_endpoint(file: Optional[UploadFile] = File(None), backend_url: Optional[str] = Form(None)):
     """
     Takes a classroom image (file upload), detects all faces, matches them against
     the enrolled students in the database, and returns detected student IDs.
@@ -396,7 +430,7 @@ async def predict_attendance_endpoint(file: Optional[UploadFile] = File(None)):
         image_bytes = await file.read()
         image_np = bytes_to_image_np(image_bytes)
 
-        detected_students, all_students, face_count = predict_attendance(image_np)
+        detected_students, all_students, face_count = predict_attendance(image_np, backend_url=backend_url)
         detected_student_ids = [int(sid) for sid in detected_students.keys()]
 
         return {
@@ -421,7 +455,7 @@ def predict_attendance_base64_endpoint(payload: Base64ImageRequest):
     """
     try:
         image_np = base64_to_image_np(payload.image_base64)
-        detected_students, all_students, face_count = predict_attendance(image_np)
+        detected_students, all_students, face_count = predict_attendance(image_np, backend_url=payload.backend_url)
         detected_student_ids = [int(sid) for sid in detected_students.keys()]
 
         return {

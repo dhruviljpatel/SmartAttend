@@ -24,6 +24,39 @@ function extractStudentIdFromToken(req: Request): number | null {
 }
 
 /**
+ * Safely parses faceEmbedding whether stored as a JSON array or stringified JSON
+ */
+function parseEmbedding(raw: any): number[] | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    const arr = raw.map(Number);
+    return arr.length === 128 ? arr : null;
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const arr = parsed.map(Number);
+        return arr.length === 128 ? arr : null;
+      }
+    } catch {}
+  }
+  return null;
+}
+
+/**
+ * Computes Euclidean distance between two 128-d vectors
+ */
+function euclideanDistance(a: number[], b: number[]): number {
+  let sum = 0;
+  for (let i = 0; i < 128; i++) {
+    const diff = a[i] - b[i];
+    sum += diff * diff;
+  }
+  return Math.sqrt(sum);
+}
+
+/**
  * GET /api/students
  * Optional query: ?subjectId=123
  * Returns all students with embeddings for ML pipeline synchronization.
@@ -336,9 +369,10 @@ export const unenrollFromSubject = async (req: Request, res: Response): Promise<
 /**
  * POST /api/students/face-login
  * Evaluates a captured webcam image:
- * - Direct embedding matching against enrolled students
- * - If match found -> returns student data + JWT token
- * - If not found -> returns exists: false + extracted faceEmbedding for immediate registration
+ * 1. Calls ML microservice to extract 128-d face embedding from image
+ * 2. Compares directly against registered student face embeddings in PostgreSQL
+ * 3. If match found within distance threshold (0.6) -> logs student in with JWT
+ * 4. If no match -> returns exists: false + extracted faceEmbedding for registration
  */
 export const checkFaceLogin = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -350,36 +384,69 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
     }
 
     const mlUrl = getMlServiceUrl();
-    console.log(`[FaceLogin] Calling ML service at: ${mlUrl}/verify-face/base64`);
+    console.log(`[FaceLogin] Extracting face embedding via: ${mlUrl}/extract-embeddings/base64`);
 
-    // Call ML FastAPI service endpoint
-    const mlResponse = await fetch(`${mlUrl}/verify-face/base64`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ image_base64: image }),
-    });
+    let queryEmbedding: number[] | null = null;
+    let facesDetected = 0;
 
-    if (!mlResponse.ok) {
-      const errorData = await mlResponse.text();
-      console.error(`[ML Service Error] Status ${mlResponse.status} from ${mlUrl}:`, errorData);
+    // 1. Primary path: Extract embeddings from ML service
+    try {
+      const mlResponse = await fetch(`${mlUrl}/extract-embeddings/base64`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image_base64: image }),
+      });
+
+      if (mlResponse.ok) {
+        const mlData = (await mlResponse.json()) as {
+          success?: boolean;
+          faces_detected?: number;
+          embeddings?: number[][];
+        };
+        facesDetected = mlData.faces_detected || 0;
+        if (mlData.embeddings && mlData.embeddings.length > 0) {
+          queryEmbedding = mlData.embeddings[0];
+        }
+      } else {
+        // Fallback: Check if /verify-face/base64 is available
+        const verifyResponse = await fetch(`${mlUrl}/verify-face/base64`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ image_base64: image }),
+        });
+
+        if (verifyResponse.ok) {
+          const verifyData = (await verifyResponse.json()) as any;
+          if (verifyData.status === 'NO_FACE') facesDetected = 0;
+          else if (verifyData.status === 'MULTIPLE_FACES') facesDetected = 2;
+          else {
+            facesDetected = 1;
+            queryEmbedding = verifyData.face_embedding || null;
+          }
+        } else {
+          const errText = await mlResponse.text();
+          res.status(502).json({
+            error: `ML facial recognition service returned status ${mlResponse.status}.`,
+            details: errText,
+          });
+          return;
+        }
+      }
+    } catch (fetchErr: any) {
+      console.error('[FaceLogin] ML service connection error:', fetchErr);
+      const isLocal = mlUrl.includes('localhost') || mlUrl.includes('127.0.0.1');
       res.status(502).json({
-        error: `ML facial recognition service returned status ${mlResponse.status}.`,
-        details: errorData || mlResponse.statusText,
-        targetUrl: `${mlUrl}/verify-face/base64`,
+        error: `Cannot connect to ML facial recognition service at "${mlUrl}".`,
+        hint: isLocal
+          ? 'ML_SERVICE_URL is defaulting to localhost. In your Render Dashboard > Backend Web Service > Environment, set ML_SERVICE_URL to your deployed ML service URL (e.g. https://your-ml-service.onrender.com).'
+          : `Render could not reach ${mlUrl}. The ML service may be sleeping (cold start on Render free tier). Please wait 30 seconds for it to wake up and try again.`,
+        targetUrl: `${mlUrl}/extract-embeddings/base64`,
       });
       return;
     }
 
-    const mlData = (await mlResponse.json()) as {
-      status: string;
-      exists: boolean;
-      student?: { id: number; name: string };
-      distance?: number;
-      face_embedding?: number[];
-      message?: string;
-    };
-
-    if (mlData.status === 'NO_FACE') {
+    // 2. Validate face detection results
+    if (facesDetected === 0) {
       res.status(400).json({
         exists: false,
         error: 'No face detected in the frame. Please look directly at the camera with clear lighting.',
@@ -387,7 +454,7 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    if (mlData.status === 'MULTIPLE_FACES') {
+    if (facesDetected > 1) {
       res.status(400).json({
         exists: false,
         error: 'Multiple faces detected in the frame. Please make sure only you are in view.',
@@ -395,40 +462,50 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // If student exists and was recognized
-    if (mlData.exists && mlData.student) {
-      const student = await prisma.student.findUnique({
-        where: { id: mlData.student.id },
-        include: {
-          subjects: {
-            include: {
-              subject: true,
-            },
-          },
-          attendanceLogs: {
-            take: 10,
-            orderBy: {
-              timestamp: 'desc',
-            },
-            include: {
-              subject: true,
-            },
-          },
-        },
+    if (!queryEmbedding || queryEmbedding.length !== 128) {
+      res.status(400).json({
+        exists: false,
+        error: 'Could not compute facial features. Please ensure your face is well-lit and unobstructed.',
       });
+      return;
+    }
 
-      if (!student) {
-        res.json({
-          exists: false,
-          faceEmbedding: mlData.face_embedding,
-          message: 'Student record not found. Please register.',
-        });
-        return;
+    // 3. Direct 1-to-N Euclidean matching against PostgreSQL database
+    const allStudents = await prisma.student.findMany({
+      where: {
+        faceEmbedding: { not: null as any },
+      },
+      include: {
+        subjects: {
+          include: { subject: true },
+        },
+        attendanceLogs: {
+          take: 10,
+          orderBy: { timestamp: 'desc' },
+          include: { subject: true },
+        },
+      },
+    });
+
+    let bestMatchStudent: (typeof allStudents)[0] | null = null;
+    let minDistance = Infinity;
+    const threshold = 0.6; // Standard dlib Euclidean distance threshold for 128-d embeddings
+
+    for (const s of allStudents) {
+      const studentEmb = parseEmbedding(s.faceEmbedding);
+      if (studentEmb) {
+        const dist = euclideanDistance(studentEmb, queryEmbedding);
+        if (dist < minDistance) {
+          minDistance = dist;
+          bestMatchStudent = s;
+        }
       }
+    }
 
-      // Generate JWT session token
+    // 4. Existing Student Match Found
+    if (bestMatchStudent && minDistance <= threshold) {
       const token = jwt.sign(
-        { id: student.id, name: student.name, role: 'student' },
+        { id: bestMatchStudent.id, name: bestMatchStudent.name, role: 'student' },
         JWT_SECRET,
         { expiresIn: '7d' }
       );
@@ -436,42 +513,28 @@ export const checkFaceLogin = async (req: Request, res: Response): Promise<void>
       res.json({
         exists: true,
         student: {
-          id: student.id,
-          student_id: student.id,
-          name: student.name,
-          subjects: student.subjects.map((s) => s.subject),
-          recentAttendance: student.attendanceLogs,
+          id: bestMatchStudent.id,
+          student_id: bestMatchStudent.id,
+          name: bestMatchStudent.name,
+          subjects: bestMatchStudent.subjects.map((s) => s.subject),
+          recentAttendance: bestMatchStudent.attendanceLogs,
         },
         token,
-        distance: mlData.distance,
-        message: `Welcome back, ${student.name}!`,
+        distance: Math.round(minDistance * 10000) / 10000,
+        message: `Welcome back, ${bestMatchStudent.name}!`,
       });
       return;
     }
 
-    // If student does not exist (new student)
+    // 5. No Match -> New Student Registration Required
     res.json({
       exists: false,
-      faceEmbedding: mlData.face_embedding,
-      message: 'Face detected, but no matching student record found. Please enter your name to register.',
+      faceEmbedding: queryEmbedding,
+      distance: minDistance !== Infinity ? Math.round(minDistance * 10000) / 10000 : null,
+      message: 'Face captured! No matching student record found. Enter your full name to complete registration.',
     });
   } catch (error: any) {
     console.error('Error during face login:', error);
-    const mlUrl = getMlServiceUrl();
-    if (
-      error?.code === 'ECONNREFUSED' ||
-      error?.cause?.code === 'ECONNREFUSED' ||
-      error?.message?.includes('fetch failed')
-    ) {
-      res.status(502).json({
-        error: `Cannot connect to ML facial recognition service at "${mlUrl}".`,
-        hint: mlUrl.includes('localhost')
-          ? 'ML_SERVICE_URL is currently defaulting to localhost. In your Render Dashboard > Backend Web Service > Environment, set ML_SERVICE_URL to your deployed ML service URL (e.g. https://your-ml-service.onrender.com).'
-          : `Render could not reach ${mlUrl}. The ML service may be sleeping (cold start), deploying, or experiencing an issue. Try opening ${mlUrl}/health in a browser tab to wake it up.`,
-        targetUrl: `${mlUrl}/verify-face/base64`,
-      });
-      return;
-    }
     res.status(500).json({ error: error?.message || 'Internal server error during face authentication.' });
   }
 };
@@ -489,7 +552,7 @@ export const registerStudent = async (req: Request, res: Response): Promise<void
       return;
     }
 
-    let finalEmbedding = faceEmbedding;
+    let finalEmbedding = parseEmbedding(faceEmbedding);
 
     // If faceEmbedding wasn't directly provided, extract it using image
     if (!finalEmbedding && image) {
@@ -503,19 +566,19 @@ export const registerStudent = async (req: Request, res: Response): Promise<void
       if (mlResponse.ok) {
         const mlData = (await mlResponse.json()) as { embeddings: number[][] };
         if (mlData.embeddings && mlData.embeddings.length > 0) {
-          finalEmbedding = mlData.embeddings[0];
+          finalEmbedding = parseEmbedding(mlData.embeddings[0]);
         }
       }
     }
 
-    if (!finalEmbedding) {
+    if (!finalEmbedding || finalEmbedding.length !== 128) {
       res.status(400).json({
-        error: 'Face embedding or a clear face image is required to register.',
+        error: 'A valid 128-dimensional face embedding or clear face image is required to register.',
       });
       return;
     }
 
-    // Create the student in the database
+    // Create the student in the database with validated number[] float array
     const newStudent = await prisma.student.create({
       data: {
         name: name.trim(),

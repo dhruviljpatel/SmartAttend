@@ -60,6 +60,7 @@ export const StudentLogin = () => {
     const [recognizedStudent, setRecognizedStudent] = useState<RecognizedStudent | null>(null);
     const [faceEmbedding, setFaceEmbedding] = useState<number[] | null>(null);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [errorHint, setErrorHint] = useState<string | null>(null);
 
     // Registration Form State
     const [studentName, setStudentName] = useState('');
@@ -84,13 +85,14 @@ export const StudentLogin = () => {
         setCapturedImage(imageSrc);
         setStep('analyzing');
         setErrorMessage(null);
+        setErrorHint(null);
 
         try {
             const response = await api.post('/students/face-login', { image: imageSrc });
             const data = response.data;
 
             if (data.exists && data.student) {
-                // Student exists!
+                // Student exists & face verified!
                 setRecognizedStudent(data.student);
                 setStep('recognized');
 
@@ -112,7 +114,7 @@ export const StudentLogin = () => {
                     );
                 }, 1500);
             } else {
-                // New Student! Needs registration
+                // New Student! Needs one-time registration to save face embedding
                 setFaceEmbedding(data.faceEmbedding || null);
                 setStep('register');
             }
@@ -122,7 +124,9 @@ export const StudentLogin = () => {
                 err.response?.data?.error ||
                 err.response?.data?.message ||
                 'Unable to process facial authentication. Please try again.';
+            const hint = err.response?.data?.hint || null;
             setErrorMessage(msg);
+            setErrorHint(hint);
             setStep('error');
         }
     };
@@ -181,6 +185,7 @@ export const StudentLogin = () => {
         setRecognizedStudent(null);
         setFaceEmbedding(null);
         setErrorMessage(null);
+        setErrorHint(null);
         setRegisterError(null);
         setStudentName('');
         setStep('capture');
@@ -210,7 +215,7 @@ export const StudentLogin = () => {
                         {step === 'capture' && 'Position your face in the center of the frame to log in'}
                         {step === 'analyzing' && 'Matching your face with enrolled students...'}
                         {step === 'recognized' && 'Facial verification successful!'}
-                        {step === 'register' && 'New student detected! Complete your quick profile'}
+                        {step === 'register' && 'Face scanned! Complete your profile to register'}
                         {step === 'error' && 'Authentication assistance needed'}
                     </CardDescription>
 
@@ -317,10 +322,10 @@ export const StudentLogin = () => {
                                 <div>
                                     <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-800 bg-blue-100/80 px-2.5 py-0.5 rounded-full mb-1">
                                         <Icons8UserAdd className="w-3.5 h-3.5" />
-                                        New Student Profile
+                                        First-Time Registration
                                     </div>
                                     <p className="text-xs text-blue-900 leading-snug">
-                                        Face embedding captured! Enter your name to register and complete your login.
+                                        Face scanned successfully! Since this face is not yet registered, enter your name below to create your student account.
                                     </p>
                                     {enrollCode && (
                                         <p className="text-[11px] text-indigo-700 font-semibold mt-1">
@@ -387,15 +392,21 @@ export const StudentLogin = () => {
                     {/* STEP 5: ERROR STATE */}
                     {step === 'error' && (
                         <div className="py-6 text-center animate-in fade-in duration-300">
-                            <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4">
+                            <div className="w-14 h-14 rounded-full bg-red-100 text-red-600 flex items-center justify-center mx-auto mb-4 shadow-xs">
                                 <AlertCircle className="w-7 h-7" />
                             </div>
                             <h3 className="text-lg font-bold text-gray-900 mb-1">
-                                Verification Note
+                                Face Recognition Note
                             </h3>
-                            <p className="text-sm text-gray-600 max-w-md mx-auto mb-6">
+                            <p className="text-sm font-medium text-gray-700 max-w-md mx-auto mb-3">
                                 {errorMessage || 'Could not verify face. Please ensure proper camera alignment.'}
                             </p>
+                            {errorHint && (
+                                <div className="max-w-md mx-auto mb-5 p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs text-left leading-relaxed">
+                                    <p className="font-semibold mb-1">💡 Troubleshooting Hint:</p>
+                                    <p>{errorHint}</p>
+                                </div>
+                            )}
                             <Button
                                 size="xl"
                                 onClick={handleReset}

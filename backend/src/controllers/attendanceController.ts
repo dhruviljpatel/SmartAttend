@@ -12,6 +12,33 @@ interface PredictResponse {
   error?: string;
 }
 
+function parseEmbedding(raw: any): number[] | null {
+  if (!raw) return null;
+  if (Array.isArray(raw)) {
+    const arr = raw.map(Number);
+    return arr.length === 128 ? arr : null;
+  }
+  if (typeof raw === 'string') {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const arr = parsed.map(Number);
+        return arr.length === 128 ? arr : null;
+      }
+    } catch {}
+  }
+  return null;
+}
+
+function euclideanDistance(a: number[], b: number[]): number {
+  let sum = 0;
+  for (let i = 0; i < 128; i++) {
+    const diff = a[i] - b[i];
+    sum += diff * diff;
+  }
+  return Math.sqrt(sum);
+}
+
 /**
  * POST /api/attendance/take
  * Runs face analysis on uploaded classroom photos and records attendance in the database.
@@ -30,7 +57,7 @@ export const takeAttendance = async (req: Request, res: Response): Promise<void>
       return;
     }
 
-    // 1. Verify subject exists and fetch its enrolled students
+    // 1. Verify subject exists and fetch its enrolled students with embeddings
     const subject = await prisma.subject.findUnique({
       where: { id: Number(subjectId) },
       include: {
@@ -47,27 +74,66 @@ export const takeAttendance = async (req: Request, res: Response): Promise<void>
       return;
     }
 
+    const enrolledStudents = subject.students.map((item) => item.student);
+
     // 2. Process each classroom image via ML microservice
     const detectedStudentIdsSet = new Set<number>();
     let totalFacesDetected = 0;
+    const mlUrl = getMlServiceUrl();
 
     for (const imageBase64 of images) {
       try {
-        const mlUrl = getMlServiceUrl();
-        const mlResponse = await fetch(`${mlUrl}/predict-attendance/base64`, {
+        let extracted = false;
+
+        // Preferred path: Extract all face embeddings from the image
+        const mlResponse = await fetch(`${mlUrl}/extract-embeddings/base64`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ image_base64: imageBase64 }),
         });
 
         if (mlResponse.ok) {
-          const mlData = (await mlResponse.json()) as PredictResponse;
-          totalFacesDetected += mlData.total_faces_detected || 0;
-          if (Array.isArray(mlData.detected_student_ids)) {
-            mlData.detected_student_ids.forEach((id) => detectedStudentIdsSet.add(Number(id)));
+          const mlData = (await mlResponse.json()) as {
+            faces_detected?: number;
+            embeddings?: number[][];
+          };
+          const count = mlData.faces_detected || (mlData.embeddings ? mlData.embeddings.length : 0);
+          totalFacesDetected += count;
+
+          if (mlData.embeddings && Array.isArray(mlData.embeddings)) {
+            extracted = true;
+            // Compare each detected classroom face against enrolled students in PostgreSQL
+            for (const faceEmb of mlData.embeddings) {
+              if (!Array.isArray(faceEmb) || faceEmb.length !== 128) continue;
+
+              for (const student of enrolledStudents) {
+                const sEmb = parseEmbedding(student.faceEmbedding);
+                if (sEmb) {
+                  const dist = euclideanDistance(sEmb, faceEmb);
+                  if (dist <= 0.6) {
+                    detectedStudentIdsSet.add(student.id);
+                  }
+                }
+              }
+            }
           }
-        } else {
-          console.warn('[ML Service] Non-OK response on photo analysis:', await mlResponse.text());
+        }
+
+        // Fallback: If /extract-embeddings was not supported, try /predict-attendance/base64
+        if (!extracted) {
+          const predictRes = await fetch(`${mlUrl}/predict-attendance/base64`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ image_base64: imageBase64 }),
+          });
+
+          if (predictRes.ok) {
+            const mlData = (await predictRes.json()) as PredictResponse;
+            totalFacesDetected += mlData.total_faces_detected || 0;
+            if (Array.isArray(mlData.detected_student_ids)) {
+              mlData.detected_student_ids.forEach((id) => detectedStudentIdsSet.add(Number(id)));
+            }
+          }
         }
       } catch (mlErr) {
         console.error('[ML Service error connecting to Python microservice]:', mlErr);
@@ -75,7 +141,6 @@ export const takeAttendance = async (req: Request, res: Response): Promise<void>
     }
 
     const attendanceTimestamp = new Date();
-    const enrolledStudents = subject.students.map((item) => item.student);
 
     // 3. Mark attendance in PostgreSQL
     const markedPresentList: { id: number; name: string }[] = [];
@@ -215,4 +280,3 @@ export const getAttendanceRecords = async (req: Request, res: Response): Promise
     res.status(500).json({ error: 'Internal server error while fetching attendance records.' });
   }
 };
-
