@@ -479,5 +479,6 @@ if __name__ == "__main__":
     import uvicorn
     host = os.getenv("HOST", "0.0.0.0")
     port = int(os.getenv("PORT", "8000"))
-    print(f"Starting SmartAttend ML FastAPI server on http://{host}:{port}")
-    uvicorn.run("face:app", host=host, port=port, reload=True)
+    is_dev = os.getenv("ENVIRONMENT", "").lower() == "development"
+    print(f"Starting SmartAttend ML FastAPI server on http://{host}:{port} (reload={is_dev})")
+    uvicorn.run("face:app", host=host, port=port, reload=is_dev)
